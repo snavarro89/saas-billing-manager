@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  CUSTOM
+}
+
+enum CustomerType {
+  NORMAL
+  STRATEGIC
+  TRIAL
+}
+
+enum PeriodOrigin {
+  PAYMENT
+  TRIAL
+  MANUAL_EXTENSION
+}
+
+enum PeriodStatus {
+  ACTIVE
+  EXPIRING
+  EXPIRED
+}
+
+enum BillingStatus {
+  PENDING
+  INVOICED
+  NOT_APPLICABLE
+}
+
+enum PaymentStatus {
+  CONFIRMED
+  REVERTED
+}
+
+enum OperationalStatus {
+  ACTIVE
+  ACTIVE_WITH_DEBT
+  SUSPENDED
+  CANCELLED
+  LOST_CUSTOMER
+}
+
+enum RelationshipStatus {
+  ACTIVE
+  UNDER_FOLLOW_UP
+  SUSPENDED_NON_PAYMENT
+  SUSPENDED_NEGOTIATION
+  CANCELLED_VOLUNTARILY
+  LOST_NO_RESPONSE
+  ELIGIBLE_FOR_DELETION
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String?  @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id                String              @id @default(cuid())
+  commercialName    String
+  alias             String?
+  adminContact      String?
+  billingContact    String?
+  notes             String?
+  
+  // Fiscal identity (informative only)
+  legalName         String?
+  rfc               String?
+  fiscalRegime      String?
+  cfdiUsage         String?
+  billingEmail      String?
+  
+  // Status fields
+  operationalStatus OperationalStatus?  @default(ACTIVE)
+  relationshipStatus RelationshipStatus? @default(ACTIVE)
+  
+  // Soft delete
+  isDeleted         Boolean             @default(false)
+  
+  // Relations
+  agreements        CommercialAgreement[]
+  servicePeriods    ServicePeriod[]
+  payments          Payment[]
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([operationalStatus])
+  @@index([relationshipStatus])
+  @@index([isDeleted])
+}
+
+model CommercialAgreement {
+  id              String        @id @default(cuid())
+  customerId      String
+  customer        Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  subtotalAmount  Float
+  currency        String        @default("MXN")
+  description     String?
+  billingCycle    BillingCycle
+  renewalDay      Int           // Day of month (1-31)
+  gracePeriodDays Int           @default(0)
+  customerType    CustomerType  @default(NORMAL)
+  specialRules    String?
+  
+  isActive        Boolean       @default(true)
+  startDate       DateTime      @default(now())
+  endDate         DateTime?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([customerId])
+  @@index([isActive])
+}
+
+model ServicePeriod {
+  id                  String          @id @default(cuid())
+  customerId          String
+  customer            Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  startDate           DateTime
+  endDate             DateTime
+  origin              PeriodOrigin
+  status              PeriodStatus    @default(ACTIVE)
+  subtotalAmount      Float
+  currency            String          @default("MXN")
+  billingStatus       BillingStatus   @default(PENDING)
+  suggestedInvoiceDate DateTime?
+  notes               String?
+  
+  // Relations
+  paymentPeriods      PaymentPeriod[]
+  
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  
+  @@index([customerId])
+  @@index([status])
+  @@index([endDate])
+  @@index([billingStatus])
+}
+
+model Payment {
+  id            String          @id @default(cuid())
+  customerId    String
+  customer      Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  paymentDate   DateTime        @default(now())
+  amount        Float
+  currency      String          @default("MXN")
+  method        String
+  reference     String?
+  status        PaymentStatus   @default(CONFIRMED)
+  notes         String?
+  
+  // Relations
+  paymentPeriods PaymentPeriod[]
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  @@index([customerId])
+  @@index([paymentDate])
+  @@index([status])
+}
+
+model PaymentPeriod {
+  id              String        @id @default(cuid())
+  paymentId       String
+  payment         Payment       @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  servicePeriodId String
+  servicePeriod   ServicePeriod @relation(fields: [servicePeriodId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime      @default(now())
+  
+  @@unique([paymentId, servicePeriodId])
+  @@index([paymentId])
+  @@index([servicePeriodId])
+}
