@@ -3,11 +3,11 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-// Use POSTGRES_PRISMA_URL in production (Vercel/Supabase) or DATABASE_URL for local development
-const databaseUrl = process.env["POSTGRES_PRISMA_URL"] || process.env["DATABASE_URL"];
+// Use PRISMA_POSTGRES_PRISMA_DATABASE_URL in production (Vercel/Prisma Postgres) or DATABASE_URL for local development
+const databaseUrl = process.env["PRISMA_POSTGRES_PRISMA_DATABASE_URL"] || process.env["DATABASE_URL"];
 
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL or POSTGRES_PRISMA_URL must be set");
+  throw new Error("PRISMA_POSTGRES_PRISMA_DATABASE_URL or DATABASE_URL must be set");
 }
 
 export default defineConfig({
