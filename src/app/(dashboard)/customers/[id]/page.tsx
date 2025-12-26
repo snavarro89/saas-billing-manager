@@ -7,6 +7,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { PaymentForm } from "@/components/payments/PaymentForm"
 import { ServicePeriodTimeline } from "@/components/customers/ServicePeriodTimeline"
+import { ServicePeriodForm } from "@/components/periods/ServicePeriodForm"
+import { CustomerEditForm } from "@/components/customers/CustomerEditForm"
+import { calculateCustomerStatuses } from "@/lib/status-calculator"
 
 async function getCustomer(id: string) {
   const customer = await prisma.customer.findUnique({
@@ -17,13 +20,21 @@ async function getCustomer(id: string) {
       },
       servicePeriods: {
         orderBy: { startDate: "desc" },
+        include: {
+          invoice: true,
+        },
       },
       payments: {
         orderBy: { paymentDate: "desc" },
         include: {
+          invoice: true,
           paymentPeriods: {
             include: {
-              servicePeriod: true,
+              servicePeriod: {
+                include: {
+                  invoice: true,
+                },
+              },
             },
           },
         },
@@ -38,7 +49,7 @@ async function getCustomer(id: string) {
   // Calculate statuses
   const today = new Date()
   const activePeriod = customer.servicePeriods.find(
-    (p) => p.startDate <= today && p.endDate >= today && p.status === "ACTIVE"
+    (p) => new Date(p.startDate) <= today && new Date(p.endDate) >= today && p.status === "ACTIVE"
   )
 
   return { customer, activePeriod }
@@ -47,9 +58,10 @@ async function getCustomer(id: string) {
 export default async function CustomerDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const data = await getCustomer(params.id)
+  const resolvedParams = await params
+  const data = await getCustomer(resolvedParams.id)
 
   if (!data) {
     notFound()
@@ -57,6 +69,9 @@ export default async function CustomerDetailPage({
 
   const { customer, activePeriod } = data
   const activeAgreement = customer.agreements.find((a) => a.isActive)
+  
+  // Calculate current status
+  const statuses = await calculateCustomerStatuses(customer.id)
 
   return (
     <div className="space-y-6">
@@ -65,83 +80,15 @@ export default async function CustomerDetailPage({
           <Link href="/customers" className="text-blue-600 hover:text-blue-800 text-sm">
             ← Back to Customers
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mt-2">
-            {customer.commercialName}
-          </h1>
-          {customer.alias && (
-            <p className="text-gray-600 mt-1">Alias: {customer.alias}</p>
-          )}
         </div>
-        <div className="flex gap-2">
-          <StatusBadge status={customer.operationalStatus || "ACTIVE"} />
+        <div className="flex gap-2 items-center">
+          <StatusBadge status={statuses.operationalStatus} />
           <StatusBadge status={customer.relationshipStatus || "ACTIVE"} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Commercial Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Commercial Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Admin Contact
-              </label>
-              <p className="text-gray-900">{customer.adminContact || "—"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Billing Contact
-              </label>
-              <p className="text-gray-900">{customer.billingContact || "—"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Notes</label>
-              <p className="text-gray-900 whitespace-pre-wrap">
-                {customer.notes || "—"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Fiscal Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Fiscal Information</CardTitle>
-            <CardDescription>For invoice preparation</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Legal Name
-              </label>
-              <p className="text-gray-900 font-mono text-sm">
-                {customer.legalName || "—"}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">RFC</label>
-              <p className="text-gray-900 font-mono text-sm">
-                {customer.rfc || "—"}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Fiscal Regime
-              </label>
-              <p className="text-gray-900">{customer.fiscalRegime || "—"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Billing Email
-              </label>
-              <p className="text-gray-900">{customer.billingEmail || "—"}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Customer Information with Inline Edit */}
+      <CustomerEditForm customer={customer} />
 
       {/* Agreement */}
       {activeAgreement && (
@@ -193,10 +140,26 @@ export default async function CustomerDetailPage({
       {/* Service Period Timeline */}
       <Card>
         <CardHeader>
-          <CardTitle>Service Periods</CardTitle>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Service Periods</CardTitle>
+              <CardDescription>Manage service periods and link payments</CardDescription>
+            </div>
+            <ServicePeriodForm 
+              customerId={customer.id}
+              defaultSubtotal={activeAgreement?.subtotalAmount || 0}
+              defaultCurrency={activeAgreement?.currency || "MXN"}
+            />
+          </div>
         </CardHeader>
         <CardContent>
-          <ServicePeriodTimeline periods={customer.servicePeriods} />
+              <ServicePeriodTimeline
+                periods={customer.servicePeriods}
+                payments={customer.payments}
+                activeAgreement={activeAgreement}
+                customerId={customer.id}
+                customerInvoiceRequired={customer.invoiceRequired}
+              />
         </CardContent>
       </Card>
 
@@ -213,11 +176,11 @@ export default async function CustomerDetailPage({
               customer.payments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="border border-gray-200 rounded-lg p-4"
+                  className="border border-gray-200 rounded-lg p-4 bg-white"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-gray-900">
                         {(payment as any).currency || "MXN"} {payment.amount.toFixed(2)}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -227,6 +190,44 @@ export default async function CustomerDetailPage({
                         <p className="text-sm text-gray-500">
                           Ref: {payment.reference}
                         </p>
+                      )}
+                      {(payment as any).screenshotUrl && (
+                        <p className="text-sm text-blue-600 mt-1">
+                          <a 
+                            href={(payment as any).screenshotUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="hover:underline"
+                          >
+                            📷 View Screenshot
+                          </a>
+                        </p>
+                      )}
+                      {(payment as any).invoice && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-600">
+                            Invoice: <StatusBadge status={(payment as any).invoice.status} />
+                            {(payment as any).invoice.invoiceNumber && (
+                              <span className="ml-2 text-gray-500">
+                                (#{(payment as any).invoice.invoiceNumber})
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      )}
+                      {!((payment as any).invoice) && (payment as any).paymentPeriods?.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-xs text-gray-500">
+                            {(() => {
+                              const periods = (payment as any).paymentPeriods.map((pp: any) => pp.servicePeriod)
+                              const hasInvoice = periods.some((p: any) => p.invoice)
+                              if (hasInvoice) {
+                                return "Invoice exists for linked period"
+                              }
+                              return "No invoice linked"
+                            })()}
+                          </p>
+                        </div>
                       )}
                     </div>
                     <StatusBadge status={payment.status} />
@@ -248,8 +249,22 @@ export default async function CustomerDetailPage({
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
-            <PaymentForm customerId={customer.id} />
-            <Button variant="outline">Extend Service Period</Button>
+            <PaymentForm 
+              customerId={customer.id}
+              servicePeriods={customer.servicePeriods.map(p => {
+                const hasPayment = customer.payments.some(payment =>
+                  payment.paymentPeriods?.some((pp: any) => pp.servicePeriodId === p.id)
+                )
+                return {
+                  id: p.id,
+                  startDate: p.startDate,
+                  endDate: p.endDate,
+                  subtotalAmount: p.subtotalAmount,
+                  currency: p.currency,
+                  hasPayment,
+                }
+              })}
+            />
             <Button variant="outline">Suspend Customer</Button>
             <Button variant="outline">Mark as Lost</Button>
           </div>

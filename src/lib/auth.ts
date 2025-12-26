@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { prisma } from "./db"
 import bcrypt from "bcryptjs"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -14,6 +13,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!credentials?.username || !credentials?.password) {
           return null
         }
+
+        // Lazy import Prisma to avoid loading in Edge runtime
+        const { prisma } = await import("./db")
 
         const user = await prisma.user.findUnique({
           where: { username: credentials.username as string }

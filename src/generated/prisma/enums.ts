@@ -65,10 +65,10 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 export const OperationalStatus = {
   ACTIVE: 'ACTIVE',
-  ACTIVE_WITH_DEBT: 'ACTIVE_WITH_DEBT',
+  ACTIVE_WITH_PENDING_PAYMENT: 'ACTIVE_WITH_PENDING_PAYMENT',
+  PENDING_RENEWAL: 'PENDING_RENEWAL',
   SUSPENDED: 'SUSPENDED',
-  CANCELLED: 'CANCELLED',
-  LOST_CUSTOMER: 'LOST_CUSTOMER'
+  LOST: 'LOST'
 } as const
 
 export type OperationalStatus = (typeof OperationalStatus)[keyof typeof OperationalStatus]
@@ -85,3 +85,13 @@ export const RelationshipStatus = {
 } as const
 
 export type RelationshipStatus = (typeof RelationshipStatus)[keyof typeof RelationshipStatus]
+
+
+export const InvoiceStatus = {
+  PENDING: 'PENDING',
+  GENERATED: 'GENERATED',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]

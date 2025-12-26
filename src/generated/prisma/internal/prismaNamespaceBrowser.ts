@@ -56,7 +56,8 @@ export const ModelName = {
   CommercialAgreement: 'CommercialAgreement',
   ServicePeriod: 'ServicePeriod',
   Payment: 'Payment',
-  PaymentPeriod: 'PaymentPeriod'
+  PaymentPeriod: 'PaymentPeriod',
+  Invoice: 'Invoice'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -101,6 +102,7 @@ export const CustomerScalarFieldEnum = {
   billingEmail: 'billingEmail',
   operationalStatus: 'operationalStatus',
   relationshipStatus: 'relationshipStatus',
+  invoiceRequired: 'invoiceRequired',
   isDeleted: 'isDeleted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -157,6 +159,8 @@ export const PaymentScalarFieldEnum = {
   currency: 'currency',
   method: 'method',
   reference: 'reference',
+  screenshotUrl: 'screenshotUrl',
+  invoiceId: 'invoiceId',
   status: 'status',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -174,6 +178,28 @@ export const PaymentPeriodScalarFieldEnum = {
 } as const
 
 export type PaymentPeriodScalarFieldEnum = (typeof PaymentPeriodScalarFieldEnum)[keyof typeof PaymentPeriodScalarFieldEnum]
+
+
+export const InvoiceScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  servicePeriodId: 'servicePeriodId',
+  invoiceNumber: 'invoiceNumber',
+  invoiceUrl: 'invoiceUrl',
+  status: 'status',
+  subtotalAmount: 'subtotalAmount',
+  taxAmount: 'taxAmount',
+  totalAmount: 'totalAmount',
+  currency: 'currency',
+  generatedDate: 'generatedDate',
+  paidDate: 'paidDate',
+  paidByPaymentId: 'paidByPaymentId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
 
 
 export const SortOrder = {

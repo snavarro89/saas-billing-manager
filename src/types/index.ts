@@ -3,26 +3,30 @@ import type {
   CommercialAgreement,
   ServicePeriod,
   Payment,
+  Invoice,
   OperationalStatus,
   RelationshipStatus,
   BillingStatus,
   PaymentStatus,
   PeriodStatus,
+  InvoiceStatus,
   BillingCycle,
   CustomerType,
   PeriodOrigin
-} from '@/generated/prisma'
+} from '../generated/prisma/client'
 
 export type {
   Customer,
   CommercialAgreement,
   ServicePeriod,
   Payment,
+  Invoice,
   OperationalStatus,
   RelationshipStatus,
   BillingStatus,
   PaymentStatus,
   PeriodStatus,
+  InvoiceStatus,
   BillingCycle,
   CustomerType,
   PeriodOrigin

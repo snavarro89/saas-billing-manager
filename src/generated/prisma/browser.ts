@@ -47,3 +47,8 @@ export type Payment = Prisma.PaymentModel
  * 
  */
 export type PaymentPeriod = Prisma.PaymentPeriodModel
+/**
+ * Model Invoice
+ * 
+ */
+export type Invoice = Prisma.InvoiceModel

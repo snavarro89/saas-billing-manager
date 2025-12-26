@@ -282,6 +282,7 @@ export type ServicePeriodWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
+  invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
 }
 
 export type ServicePeriodOrderByWithRelationInput = {
@@ -300,6 +301,7 @@ export type ServicePeriodOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.CustomerOrderByWithRelationInput
   paymentPeriods?: Prisma.PaymentPeriodOrderByRelationAggregateInput
+  invoice?: Prisma.InvoiceOrderByWithRelationInput
 }
 
 export type ServicePeriodWhereUniqueInput = Prisma.AtLeast<{
@@ -321,6 +323,7 @@ export type ServicePeriodWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
+  invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
 }, "id">
 
 export type ServicePeriodOrderByWithAggregationInput = {
@@ -378,6 +381,7 @@ export type ServicePeriodCreateInput = {
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodUncheckedCreateInput = {
@@ -395,6 +399,7 @@ export type ServicePeriodUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodUpdateInput = {
@@ -412,6 +417,7 @@ export type ServicePeriodUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodUncheckedUpdateInput = {
@@ -429,6 +435,7 @@ export type ServicePeriodUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodCreateManyInput = {
@@ -617,6 +624,20 @@ export type ServicePeriodUpdateOneRequiredWithoutPaymentPeriodsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServicePeriodUpdateToOneWithWhereWithoutPaymentPeriodsInput, Prisma.ServicePeriodUpdateWithoutPaymentPeriodsInput>, Prisma.ServicePeriodUncheckedUpdateWithoutPaymentPeriodsInput>
 }
 
+export type ServicePeriodCreateNestedOneWithoutInvoiceInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedCreateWithoutInvoiceInput>
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutInvoiceInput
+  connect?: Prisma.ServicePeriodWhereUniqueInput
+}
+
+export type ServicePeriodUpdateOneRequiredWithoutInvoiceNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedCreateWithoutInvoiceInput>
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutInvoiceInput
+  upsert?: Prisma.ServicePeriodUpsertWithoutInvoiceInput
+  connect?: Prisma.ServicePeriodWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServicePeriodUpdateToOneWithWhereWithoutInvoiceInput, Prisma.ServicePeriodUpdateWithoutInvoiceInput>, Prisma.ServicePeriodUncheckedUpdateWithoutInvoiceInput>
+}
+
 export type ServicePeriodCreateWithoutCustomerInput = {
   id?: string
   startDate: Date | string
@@ -631,6 +652,7 @@ export type ServicePeriodCreateWithoutCustomerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodUncheckedCreateWithoutCustomerInput = {
@@ -647,6 +669,7 @@ export type ServicePeriodUncheckedCreateWithoutCustomerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodCreateOrConnectWithoutCustomerInput = {
@@ -708,6 +731,7 @@ export type ServicePeriodCreateWithoutPaymentPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodUncheckedCreateWithoutPaymentPeriodsInput = {
@@ -724,6 +748,7 @@ export type ServicePeriodUncheckedCreateWithoutPaymentPeriodsInput = {
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutServicePeriodInput
 }
 
 export type ServicePeriodCreateOrConnectWithoutPaymentPeriodsInput = {
@@ -756,6 +781,7 @@ export type ServicePeriodUpdateWithoutPaymentPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodUncheckedUpdateWithoutPaymentPeriodsInput = {
@@ -772,6 +798,91 @@ export type ServicePeriodUncheckedUpdateWithoutPaymentPeriodsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutServicePeriodNestedInput
+}
+
+export type ServicePeriodCreateWithoutInvoiceInput = {
+  id?: string
+  startDate: Date | string
+  endDate: Date | string
+  origin: $Enums.PeriodOrigin
+  status?: $Enums.PeriodStatus
+  subtotalAmount: number
+  currency?: string
+  billingStatus?: $Enums.BillingStatus
+  suggestedInvoiceDate?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
+}
+
+export type ServicePeriodUncheckedCreateWithoutInvoiceInput = {
+  id?: string
+  customerId: string
+  startDate: Date | string
+  endDate: Date | string
+  origin: $Enums.PeriodOrigin
+  status?: $Enums.PeriodStatus
+  subtotalAmount: number
+  currency?: string
+  billingStatus?: $Enums.BillingStatus
+  suggestedInvoiceDate?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
+}
+
+export type ServicePeriodCreateOrConnectWithoutInvoiceInput = {
+  where: Prisma.ServicePeriodWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicePeriodCreateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedCreateWithoutInvoiceInput>
+}
+
+export type ServicePeriodUpsertWithoutInvoiceInput = {
+  update: Prisma.XOR<Prisma.ServicePeriodUpdateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedUpdateWithoutInvoiceInput>
+  create: Prisma.XOR<Prisma.ServicePeriodCreateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedCreateWithoutInvoiceInput>
+  where?: Prisma.ServicePeriodWhereInput
+}
+
+export type ServicePeriodUpdateToOneWithWhereWithoutInvoiceInput = {
+  where?: Prisma.ServicePeriodWhereInput
+  data: Prisma.XOR<Prisma.ServicePeriodUpdateWithoutInvoiceInput, Prisma.ServicePeriodUncheckedUpdateWithoutInvoiceInput>
+}
+
+export type ServicePeriodUpdateWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origin?: Prisma.EnumPeriodOriginFieldUpdateOperationsInput | $Enums.PeriodOrigin
+  status?: Prisma.EnumPeriodStatusFieldUpdateOperationsInput | $Enums.PeriodStatus
+  subtotalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+  suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
+}
+
+export type ServicePeriodUncheckedUpdateWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origin?: Prisma.EnumPeriodOriginFieldUpdateOperationsInput | $Enums.PeriodOrigin
+  status?: Prisma.EnumPeriodStatusFieldUpdateOperationsInput | $Enums.PeriodStatus
+  subtotalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+  suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodCreateManyCustomerInput = {
@@ -803,6 +914,7 @@ export type ServicePeriodUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodUncheckedUpdateWithoutCustomerInput = {
@@ -819,6 +931,7 @@ export type ServicePeriodUncheckedUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutServicePeriodNestedInput
 }
 
 export type ServicePeriodUncheckedUpdateManyWithoutCustomerInput = {
@@ -883,6 +996,7 @@ export type ServicePeriodSelect<ExtArgs extends runtime.Types.Extensions.Interna
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>
+  invoice?: boolean | Prisma.ServicePeriod$invoiceArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePeriodCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["servicePeriod"]>
 
@@ -940,6 +1054,7 @@ export type ServicePeriodOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ServicePeriodInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>
+  invoice?: boolean | Prisma.ServicePeriod$invoiceArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePeriodCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServicePeriodIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -954,6 +1069,7 @@ export type $ServicePeriodPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     customer: Prisma.$CustomerPayload<ExtArgs>
     paymentPeriods: Prisma.$PaymentPeriodPayload<ExtArgs>[]
+    invoice: Prisma.$InvoicePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1365,6 +1481,7 @@ export interface Prisma__ServicePeriodClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customer<T extends Prisma.CustomerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CustomerDefaultArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   paymentPeriods<T extends Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  invoice<T extends Prisma.ServicePeriod$invoiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePeriod$invoiceArgs<ExtArgs>>): Prisma.Prisma__InvoiceClient<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1824,6 +1941,25 @@ export type ServicePeriod$paymentPeriodsArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.PaymentPeriodScalarFieldEnum | Prisma.PaymentPeriodScalarFieldEnum[]
+}
+
+/**
+ * ServicePeriod.invoice
+ */
+export type ServicePeriod$invoiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invoice
+   */
+  select?: Prisma.InvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invoice
+   */
+  omit?: Prisma.InvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvoiceInclude<ExtArgs> | null
+  where?: Prisma.InvoiceWhereInput
 }
 
 /**

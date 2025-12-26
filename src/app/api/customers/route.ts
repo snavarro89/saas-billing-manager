@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
+import { calculateCustomerStatuses } from "@/lib/status-calculator"
 
 export async function GET(request: Request) {
   try {
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
       fiscalRegime,
       cfdiUsage,
       billingEmail,
+      invoiceRequired,
     } = body
 
     const customer = await prisma.customer.create({
@@ -108,10 +110,32 @@ export async function POST(request: Request) {
         fiscalRegime,
         cfdiUsage,
         billingEmail,
+        invoiceRequired: invoiceRequired || false,
+        // Initial status will be calculated based on periods (none exist yet)
+        operationalStatus: null,
       },
     })
 
-    return NextResponse.json(customer)
+    // Calculate initial status (no periods exist yet, so it will be ACTIVE_WITH_PENDING_PAYMENT)
+    const statuses = await calculateCustomerStatuses(customer.id)
+    await prisma.customer.update({
+      where: { id: customer.id },
+      data: {
+        operationalStatus: statuses.operationalStatus,
+        relationshipStatus: statuses.relationshipStatus,
+      },
+    })
+
+    // Fetch customer with relations
+    const customerWithRelations = await prisma.customer.findUnique({
+      where: { id: customer.id },
+      include: {
+        servicePeriods: true,
+        agreements: true,
+      },
+    })
+
+    return NextResponse.json(customerWithRelations)
   } catch (error) {
     console.error("Error creating customer:", error)
     return NextResponse.json(

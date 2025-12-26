@@ -48,10 +48,10 @@ enum PaymentStatus {
 
 enum OperationalStatus {
   ACTIVE
-  ACTIVE_WITH_DEBT
+  ACTIVE_WITH_PENDING_PAYMENT
+  PENDING_RENEWAL
   SUSPENDED
-  CANCELLED
-  LOST_CUSTOMER
+  LOST
 }
 
 enum RelationshipStatus {
@@ -64,6 +64,13 @@ enum RelationshipStatus {
   ELIGIBLE_FOR_DELETION
 }
 
+enum InvoiceStatus {
+  PENDING
+  GENERATED
+  PAID
+  CANCELLED
+}
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -74,86 +81,91 @@ model User {
 }
 
 model Customer {
-  id                String              @id @default(cuid())
-  commercialName    String
-  alias             String?
-  adminContact      String?
-  billingContact    String?
-  notes             String?
-  
+  id             String  @id @default(cuid())
+  commercialName String
+  alias          String?
+  adminContact   String?
+  billingContact String?
+  notes          String?
+
   // Fiscal identity (informative only)
-  legalName         String?
-  rfc               String?
-  fiscalRegime      String?
-  cfdiUsage         String?
-  billingEmail      String?
-  
+  legalName    String?
+  rfc          String?
+  fiscalRegime String?
+  cfdiUsage    String?
+  billingEmail String?
+
   // Status fields
-  operationalStatus OperationalStatus?  @default(ACTIVE)
+  operationalStatus  OperationalStatus?  @default(ACTIVE)
   relationshipStatus RelationshipStatus? @default(ACTIVE)
-  
+
+  // Invoice settings
+  invoiceRequired Boolean @default(false)
+
   // Soft delete
-  isDeleted         Boolean             @default(false)
-  
+  isDeleted Boolean @default(false)
+
   // Relations
-  agreements        CommercialAgreement[]
-  servicePeriods    ServicePeriod[]
-  payments          Payment[]
-  
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  
+  agreements     CommercialAgreement[]
+  servicePeriods ServicePeriod[]
+  payments       Payment[]
+  invoices       Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([operationalStatus])
   @@index([relationshipStatus])
   @@index([isDeleted])
 }
 
 model CommercialAgreement {
-  id              String        @id @default(cuid())
-  customerId      String
-  customer        Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
   subtotalAmount  Float
-  currency        String        @default("MXN")
+  currency        String       @default("MXN")
   description     String?
   billingCycle    BillingCycle
-  renewalDay      Int           // Day of month (1-31)
-  gracePeriodDays Int           @default(0)
-  customerType    CustomerType  @default(NORMAL)
+  renewalDay      Int // Day of month (1-31)
+  gracePeriodDays Int          @default(0)
+  customerType    CustomerType @default(NORMAL)
   specialRules    String?
-  
-  isActive        Boolean       @default(true)
-  startDate       DateTime      @default(now())
-  endDate         DateTime?
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  
+
+  isActive  Boolean   @default(true)
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([customerId])
   @@index([isActive])
 }
 
 model ServicePeriod {
-  id                  String          @id @default(cuid())
-  customerId          String
-  customer            Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  startDate           DateTime
-  endDate             DateTime
-  origin              PeriodOrigin
-  status              PeriodStatus    @default(ACTIVE)
-  subtotalAmount      Float
-  currency            String          @default("MXN")
-  billingStatus       BillingStatus   @default(PENDING)
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  startDate            DateTime
+  endDate              DateTime
+  origin               PeriodOrigin
+  status               PeriodStatus  @default(ACTIVE)
+  subtotalAmount       Float
+  currency             String        @default("MXN")
+  billingStatus        BillingStatus @default(PENDING)
   suggestedInvoiceDate DateTime?
-  notes               String?
-  
+  notes                String?
+
   // Relations
-  paymentPeriods      PaymentPeriod[]
-  
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  
+  paymentPeriods PaymentPeriod[]
+  invoice        Invoice?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([customerId])
   @@index([status])
   @@index([endDate])
@@ -161,24 +173,28 @@ model ServicePeriod {
 }
 
 model Payment {
-  id            String          @id @default(cuid())
-  customerId    String
-  customer      Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  paymentDate   DateTime        @default(now())
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  paymentDate   DateTime      @default(now())
   amount        Float
-  currency      String          @default("MXN")
+  currency      String        @default("MXN")
   method        String
   reference     String?
-  status        PaymentStatus   @default(CONFIRMED)
+  screenshotUrl String? // URL/location of payment screenshot
+  invoiceId     String? // Optional link to invoice this payment covers
+  invoice       Invoice?      @relation("PaymentInvoice", fields: [invoiceId], references: [id], onDelete: SetNull)
+  status        PaymentStatus @default(CONFIRMED)
   notes         String?
-  
+
   // Relations
   paymentPeriods PaymentPeriod[]
-  
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  
+  paidInvoices   Invoice[]       @relation("InvoicePayment")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([customerId])
   @@index([paymentDate])
   @@index([status])
@@ -190,10 +206,44 @@ model PaymentPeriod {
   payment         Payment       @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   servicePeriodId String
   servicePeriod   ServicePeriod @relation(fields: [servicePeriodId], references: [id], onDelete: Cascade)
-  
-  createdAt       DateTime      @default(now())
-  
+
+  createdAt DateTime @default(now())
+
   @@unique([paymentId, servicePeriodId])
   @@index([paymentId])
   @@index([servicePeriodId])
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  customerId      String
+  customer        Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  servicePeriodId String        @unique
+  servicePeriod   ServicePeriod @relation(fields: [servicePeriodId], references: [id], onDelete: Cascade)
+
+  invoiceNumber  String? // External invoice number (from ERP/SAT) - alphanumeric
+  invoiceUrl     String? // URL/location of the generated invoice
+  status         InvoiceStatus @default(PENDING)
+  subtotalAmount Float
+  taxAmount      Float         @default(0)
+  totalAmount    Float
+  currency       String        @default("MXN")
+
+  generatedDate   DateTime? // When invoice was generated externally
+  paidDate        DateTime? // When invoice was marked as paid
+  paidByPaymentId String? // Payment that paid this invoice
+  paidByPayment   Payment?  @relation("InvoicePayment", fields: [paidByPaymentId], references: [id], onDelete: SetNull)
+
+  notes String?
+
+  // Relations
+  payments Payment[] @relation("PaymentInvoice") // Payments linked to this invoice
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([servicePeriodId])
+  @@index([status])
+  @@index([createdAt])
 }

@@ -1,77 +1,141 @@
 import { prisma } from "@/lib/db"
 import { StatusBadge } from "@/components/status/StatusBadge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
-import { format, addDays } from "date-fns"
+import { format, addDays, differenceInDays } from "date-fns"
 import Link from "next/link"
-import { calculateDaysOverdue } from "@/lib/status-calculator"
+import { CollectionsCustomerRow } from "@/components/collections/CollectionsCustomerRow"
 
 async function getCollectionsData() {
   const today = new Date()
-  const gracePeriodEnd = addDays(today, 30) // Look ahead 30 days for grace periods
+  today.setHours(0, 0, 0, 0)
 
-  // Overdue customers
-  const overdueCustomers = await prisma.customer.findMany({
+  // Get all service periods that don't have payments linked
+  // For invoice-required customers, also check that invoice is GENERATED
+  const unpaidPeriods = await prisma.servicePeriod.findMany({
     where: {
-      isDeleted: false,
-      operationalStatus: { in: ["SUSPENDED", "ACTIVE_WITH_DEBT"] },
+      paymentPeriods: {
+        none: {}
+      }
     },
     include: {
-      agreements: {
-        where: { isActive: true },
-        take: 1,
-      },
-      servicePeriods: {
-        orderBy: { endDate: "desc" },
-        take: 1,
-      },
-    },
-  })
-
-  // Customers in grace period
-  const gracePeriodCustomers = await prisma.customer.findMany({
-    where: {
-      isDeleted: false,
-      operationalStatus: "ACTIVE_WITH_DEBT",
-      servicePeriods: {
-        some: {
-          status: "EXPIRED",
-          endDate: {
-            gte: today,
-            lte: gracePeriodEnd,
+      invoice: true,
+      customer: {
+        include: {
+          agreements: {
+            where: { isActive: true },
+            take: 1,
+          },
+          servicePeriods: {
+            include: {
+              paymentPeriods: {
+                include: {
+                  payment: true,
+                },
+              },
+              invoice: true,
+            },
+          },
+          payments: {
+            include: {
+              paymentPeriods: true,
+            },
           },
         },
       },
     },
-    include: {
-      agreements: {
-        where: { isActive: true },
-        take: 1,
-      },
-      servicePeriods: {
-        where: { status: "EXPIRED" },
-        orderBy: { endDate: "desc" },
-        take: 1,
-      },
-    },
+    orderBy: {
+      endDate: 'asc'
+    }
   })
 
-  // Suspended customers
-  const suspendedCustomers = await prisma.customer.findMany({
-    where: {
-      isDeleted: false,
-      operationalStatus: "SUSPENDED",
-    },
-    include: {
-      agreements: {
-        where: { isActive: true },
-        take: 1,
-      },
-      servicePeriods: {
-        orderBy: { endDate: "desc" },
-        take: 1,
-      },
-    },
+  // Filter periods based on invoice requirements
+  const filteredPeriods = unpaidPeriods.filter(period => {
+    // If customer requires invoice first
+    if (period.customer.invoiceRequired) {
+      // Only show if invoice exists and is GENERATED
+      return period.invoice !== null && period.invoice.status === "GENERATED"
+    }
+    // If customer doesn't require invoice first, show all unpaid periods
+    return true
   })
+
+  // Group periods by customer
+  const customerPeriodsMap = new Map<string, typeof filteredPeriods>()
+  filteredPeriods.forEach(period => {
+    const customerId = period.customerId
+    if (!customerPeriodsMap.has(customerId)) {
+      customerPeriodsMap.set(customerId, [])
+    }
+    customerPeriodsMap.get(customerId)!.push(period)
+  })
+
+  // Get unique customers with their unpaid periods
+  const customersWithUnpaidPeriods = Array.from(customerPeriodsMap.entries()).map(([customerId, periods]) => {
+    const customer = periods[0].customer
+    const agreement = customer.agreements[0] || null
+    
+    // Calculate days overdue for the oldest unpaid period
+    const oldestPeriod = periods.sort((a, b) => 
+      new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
+    )[0]
+    
+    const periodEndDate = new Date(oldestPeriod.endDate)
+    periodEndDate.setHours(23, 59, 59, 999)
+    const daysOverdue = periodEndDate < today 
+      ? differenceInDays(today, periodEndDate)
+      : null
+
+    // Determine if in grace period
+    let inGracePeriod = false
+    if (agreement && daysOverdue !== null && daysOverdue > 0) {
+      inGracePeriod = daysOverdue <= (agreement.gracePeriodDays || 0)
+    }
+
+    return {
+      customer,
+      periods,
+      agreement,
+      daysOverdue,
+      inGracePeriod,
+      oldestPeriodEndDate: oldestPeriod.endDate,
+    }
+  })
+
+  // Categorize customers
+  const overdueCustomers: typeof customersWithUnpaidPeriods = []
+  const gracePeriodCustomers: typeof customersWithUnpaidPeriods = []
+  const suspendedCustomers: typeof customersWithUnpaidPeriods = []
+
+  customersWithUnpaidPeriods.forEach(customerData => {
+    const { customer, daysOverdue, inGracePeriod } = customerData
+
+    // Suspended customers go to suspended section
+    if (customer.operationalStatus === 'SUSPENDED') {
+      suspendedCustomers.push(customerData)
+    }
+    // Customers in grace period (overdue but within grace period)
+    else if (inGracePeriod && daysOverdue !== null && daysOverdue > 0) {
+      gracePeriodCustomers.push(customerData)
+    }
+    // Overdue customers (past grace period or no grace period)
+    else if (daysOverdue !== null && daysOverdue > 0) {
+      overdueCustomers.push(customerData)
+    }
+    // Customers with pending payments but not yet overdue
+    else {
+      gracePeriodCustomers.push(customerData)
+    }
+  })
+
+  // Sort each category
+  overdueCustomers.sort((a, b) => (b.daysOverdue || 0) - (a.daysOverdue || 0))
+  gracePeriodCustomers.sort((a, b) => {
+    const aDays = a.daysOverdue || 0
+    const bDays = b.daysOverdue || 0
+    if (aDays !== bDays) return bDays - aDays
+    return new Date(a.oldestPeriodEndDate).getTime() - new Date(b.oldestPeriodEndDate).getTime()
+  })
+  suspendedCustomers.sort((a, b) => a.customer.commercialName.localeCompare(b.customer.commercialName))
 
   return {
     overdueCustomers,
@@ -84,56 +148,12 @@ export default async function CollectionsPage() {
   const { overdueCustomers, gracePeriodCustomers, suspendedCustomers } =
     await getCollectionsData()
 
-  const renderCustomerRow = (customer: any) => {
-    const agreement = customer.agreements[0]
-    const lastPeriod = customer.servicePeriods[0]
-    const daysOverdue = lastPeriod
-      ? calculateDaysOverdue([lastPeriod], agreement)
-      : null
-
-    return (
-      <tr key={customer.id} className="hover:bg-gray-50">
-        <td className="px-6 py-4 whitespace-nowrap">
-          <Link
-            href={`/customers/${customer.id}`}
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            {customer.commercialName}
-          </Link>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-          {agreement
-            ? `${agreement.currency} ${agreement.subtotalAmount.toFixed(2)}`
-            : "—"}
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {lastPeriod
-            ? format(new Date(lastPeriod.endDate), "MMM d, yyyy")
-            : "—"}
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          {daysOverdue !== null ? (
-            <span className="text-red-600 font-medium">{daysOverdue} days</span>
-          ) : (
-            "—"
-          )}
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <StatusBadge status={customer.operationalStatus || "ACTIVE"} />
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {customer.notes || "—"}
-        </td>
-      </tr>
-    )
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Collections</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Manage overdue accounts and collections
+          Manage outstanding service periods and collections
         </p>
       </div>
 
@@ -143,43 +163,23 @@ export default async function CollectionsPage() {
           <CardTitle>Overdue Customers</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Service End
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Days Overdue
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Notes
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {overdueCustomers.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      No overdue customers
-                    </td>
-                  </tr>
-                ) : (
-                  overdueCustomers.map(renderCustomerRow)
-                )}
-              </tbody>
-            </table>
-          </div>
+          {overdueCustomers.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No overdue customers</p>
+          ) : (
+            <div className="space-y-4">
+              {overdueCustomers.map(({ customer, periods, agreement, daysOverdue }) => (
+                <CollectionsCustomerRow
+                  key={customer.id}
+                  customer={customer}
+                  periods={periods}
+                  agreement={agreement}
+                  daysOverdue={daysOverdue}
+                  allCustomerPeriods={customer.servicePeriods}
+                  payments={customer.payments}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -189,43 +189,23 @@ export default async function CollectionsPage() {
           <CardTitle>Customers in Grace Period</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Service End
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Days Overdue
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Notes
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {gracePeriodCustomers.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      No customers in grace period
-                    </td>
-                  </tr>
-                ) : (
-                  gracePeriodCustomers.map(renderCustomerRow)
-                )}
-              </tbody>
-            </table>
-          </div>
+          {gracePeriodCustomers.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No customers in grace period</p>
+          ) : (
+            <div className="space-y-4">
+              {gracePeriodCustomers.map(({ customer, periods, agreement, daysOverdue }) => (
+                <CollectionsCustomerRow
+                  key={customer.id}
+                  customer={customer}
+                  periods={periods}
+                  agreement={agreement}
+                  daysOverdue={daysOverdue}
+                  allCustomerPeriods={customer.servicePeriods}
+                  payments={customer.payments}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -235,46 +215,25 @@ export default async function CollectionsPage() {
           <CardTitle>Suspended Customers</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Service End
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Days Overdue
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Notes
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {suspendedCustomers.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      No suspended customers
-                    </td>
-                  </tr>
-                ) : (
-                  suspendedCustomers.map(renderCustomerRow)
-                )}
-              </tbody>
-            </table>
-          </div>
+          {suspendedCustomers.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No suspended customers</p>
+          ) : (
+            <div className="space-y-4">
+              {suspendedCustomers.map(({ customer, periods, agreement, daysOverdue }) => (
+                <CollectionsCustomerRow
+                  key={customer.id}
+                  customer={customer}
+                  periods={periods}
+                  agreement={agreement}
+                  daysOverdue={daysOverdue}
+                  allCustomerPeriods={customer.servicePeriods}
+                  payments={customer.payments}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   )
 }
-

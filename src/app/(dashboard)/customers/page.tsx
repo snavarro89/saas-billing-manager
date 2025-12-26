@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/status/StatusBadge"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { format } from "date-fns"
-import { calculateDaysOverdue } from "@/lib/status-calculator"
+import { calculateDaysOverdue, calculateOperationalStatus } from "@/lib/status-calculator"
 
 async function getCustomers(searchParams: { [key: string]: string | string[] | undefined }) {
   const operationalStatus = searchParams.operationalStatus as string | undefined
@@ -47,6 +47,25 @@ async function getCustomers(searchParams: { [key: string]: string | string[] | u
     orderBy: { commercialName: "asc" },
   })
 
+  // Recalculate and update operational status for each customer
+  for (const customer of customers) {
+    const calculatedStatus = await calculateOperationalStatus(
+      customer.id,
+      customer.servicePeriods,
+      customer.operationalStatus
+    )
+    
+    // Update in database if different
+    if (calculatedStatus !== customer.operationalStatus) {
+      await prisma.customer.update({
+        where: { id: customer.id },
+        data: { operationalStatus: calculatedStatus },
+      })
+      // Update the in-memory object for display
+      customer.operationalStatus = calculatedStatus
+    }
+  }
+
   // Filter by billing status if provided
   let filteredCustomers = customers
   if (billingStatus) {
@@ -63,9 +82,10 @@ async function getCustomers(searchParams: { [key: string]: string | string[] | u
 export default async function CustomersPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const customers = await getCustomers(searchParams)
+  const resolvedSearchParams = await searchParams
+  const customers = await getCustomers(resolvedSearchParams)
 
   return (
     <div className="space-y-6">

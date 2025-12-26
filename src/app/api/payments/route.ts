@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
-import { addMonths, addDays, startOfMonth, setDate } from "date-fns"
 import { updatePeriodStatuses, calculateCustomerStatuses } from "@/lib/status-calculator"
 
 export async function GET(request: Request) {
@@ -54,22 +53,30 @@ export async function POST(request: Request) {
       customerId,
       paymentDate,
       amount,
+      currency,
       method,
       reference,
+      screenshotUrl,
+      invoiceId,
       notes,
+      servicePeriodIds, // Array of service period IDs to link this payment to
     } = body
 
-    // Get customer with active agreement
+    // Validate required fields
+    if (!customerId || !paymentDate || !amount || !method) {
+      return NextResponse.json(
+        { error: "Missing required fields: customerId, paymentDate, amount, method" },
+        { status: 400 }
+      )
+    }
+
+    // Verify customer exists
     const customer = await prisma.customer.findUnique({
       where: { id: customerId },
       include: {
         agreements: {
           where: { isActive: true },
           orderBy: { startDate: "desc" },
-          take: 1,
-        },
-        servicePeriods: {
-          orderBy: { endDate: "desc" },
           take: 1,
         },
       },
@@ -82,13 +89,51 @@ export async function POST(request: Request) {
       )
     }
 
-    const agreement = customer.agreements[0]
-    if (!agreement) {
-      return NextResponse.json(
-        { error: "No active agreement found" },
-        { status: 400 }
-      )
+    // Validate invoice requirements and get periods if customer requires invoices
+    let periods: any[] = []
+    if (servicePeriodIds && Array.isArray(servicePeriodIds) && servicePeriodIds.length > 0) {
+      periods = await prisma.servicePeriod.findMany({
+        where: {
+          id: { in: servicePeriodIds },
+          customerId,
+        },
+        include: {
+          invoice: true,
+        },
+      })
+
+      if (periods.length !== servicePeriodIds.length) {
+        return NextResponse.json(
+          { error: "One or more service periods not found or don't belong to this customer" },
+          { status: 400 }
+        )
+      }
+
+      // If customer requires invoices, validate invoice requirements
+      if (customer.invoiceRequired) {
+        // Check that all periods have invoices
+        const periodsWithoutInvoices = periods.filter(p => !p.invoice)
+        if (periodsWithoutInvoices.length > 0) {
+          return NextResponse.json(
+            { error: "All service periods must have invoices before payment can be registered. Please generate invoices first." },
+            { status: 400 }
+          )
+        }
+
+        // Check that all invoices are GENERATED (not PENDING)
+        const pendingInvoices = periods.filter(p => p.invoice && p.invoice.status !== "GENERATED")
+        if (pendingInvoices.length > 0) {
+          return NextResponse.json(
+            { error: "All invoices must be generated before payment can be registered. Please mark invoices as generated first." },
+            { status: 400 }
+          )
+        }
+      }
     }
+
+    // Get currency from agreement or use provided/default
+    const agreement = customer.agreements[0]
+    const paymentCurrency = currency || agreement?.currency || "MXN"
 
     // Create payment
     const payment = await prisma.payment.create({
@@ -96,76 +141,93 @@ export async function POST(request: Request) {
         customerId,
         paymentDate: new Date(paymentDate),
         amount: parseFloat(amount),
-        currency: agreement.currency,
+        currency: paymentCurrency,
         method,
         reference,
+        screenshotUrl: screenshotUrl || null,
+        invoiceId: invoiceId || null,
         notes,
         status: "CONFIRMED",
       },
     })
 
-    // Calculate how many periods this payment covers
-    const periodsToCreate = Math.floor(amount / agreement.subtotalAmount)
-    const lastPeriod = customer.servicePeriods[0]
-    const startDate = lastPeriod
-      ? addDays(lastPeriod.endDate, 1)
-      : new Date(paymentDate)
-
-    // Generate service periods based on billing cycle
-    const periods = []
-    let currentStartDate = startDate
-
-    for (let i = 0; i < periodsToCreate; i++) {
-      let endDate: Date
-
-      switch (agreement.billingCycle) {
-        case "MONTHLY":
-          endDate = addMonths(currentStartDate, 1)
-          break
-        case "QUARTERLY":
-          endDate = addMonths(currentStartDate, 3)
-          break
-        case "SEMI_ANNUAL":
-          endDate = addMonths(currentStartDate, 6)
-          break
-        default:
-          // CUSTOM - default to monthly
-          endDate = addMonths(currentStartDate, 1)
-      }
-
-      // Adjust end date to renewal day if specified
-      if (agreement.renewalDay) {
-        const monthStart = startOfMonth(endDate)
-        endDate = setDate(monthStart, agreement.renewalDay)
-        if (endDate <= currentStartDate) {
-          endDate = addMonths(endDate, 1)
+    // Link payment to service periods if provided
+    if (servicePeriodIds && Array.isArray(servicePeriodIds) && servicePeriodIds.length > 0) {
+      // Periods were already fetched and validated above
+      // For invoice-required customers, link payment to invoice if provided
+      // If not provided but invoice exists, link to the first period's invoice
+      let paymentInvoiceId = invoiceId || null
+      if (customer.invoiceRequired && !paymentInvoiceId && periods.length > 0) {
+        const firstPeriod = periods[0]
+        if (firstPeriod?.invoice) {
+          paymentInvoiceId = firstPeriod.invoice.id
         }
       }
 
-      const period = await prisma.servicePeriod.create({
-        data: {
-          customerId,
-          startDate: currentStartDate,
-          endDate,
-          origin: "PAYMENT",
-          status: "ACTIVE",
-          subtotalAmount: agreement.subtotalAmount,
-          currency: agreement.currency,
-          billingStatus: "PENDING",
-          suggestedInvoiceDate: currentStartDate,
-        },
-      })
+      // For non-invoice-required customers, automatically create invoices for periods that don't have one
+      if (!customer.invoiceRequired) {
+        for (const period of periods) {
+          // Check if period already has an invoice
+          const periodWithInvoice = await prisma.servicePeriod.findUnique({
+            where: { id: period.id },
+            include: { invoice: true },
+          })
 
-      // Link period to payment
-      await prisma.paymentPeriod.create({
-        data: {
-          paymentId: payment.id,
-          servicePeriodId: period.id,
-        },
-      })
+          if (!periodWithInvoice?.invoice) {
+            // Calculate tax (16% IVA - should be configurable)
+            const taxRate = 0.16
+            const taxAmount = period.subtotalAmount * taxRate
+            const totalAmount = period.subtotalAmount + taxAmount
 
-      periods.push(period)
-      currentStartDate = addDays(endDate, 1)
+            // Create invoice automatically
+            const newInvoice = await prisma.invoice.create({
+              data: {
+                customerId: customer.id,
+                servicePeriodId: period.id,
+                subtotalAmount: period.subtotalAmount,
+                taxAmount,
+                totalAmount,
+                currency: period.currency || "MXN",
+                status: "PENDING",
+              },
+            })
+
+            // Link payment to the first invoice created
+            if (!paymentInvoiceId) {
+              paymentInvoiceId = newInvoice.id
+            }
+
+            // Update service period billing status
+            await prisma.servicePeriod.update({
+              where: { id: period.id },
+              data: {
+                billingStatus: "PENDING",
+              },
+            })
+          } else if (!paymentInvoiceId) {
+            // Period already has invoice, link payment to it
+            paymentInvoiceId = periodWithInvoice.invoice.id
+          }
+        }
+      }
+
+      // Update payment with invoice link if applicable
+      if (paymentInvoiceId) {
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { invoiceId: paymentInvoiceId },
+        })
+      }
+
+      // Create PaymentPeriod links
+      for (const periodId of servicePeriodIds) {
+        await prisma.paymentPeriod.create({
+          data: {
+            paymentId: payment.id,
+            servicePeriodId: periodId,
+          },
+        })
+      }
     }
 
     // Update customer statuses

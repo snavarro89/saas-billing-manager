@@ -38,6 +38,7 @@ export type CustomerMinAggregateOutputType = {
   billingEmail: string | null
   operationalStatus: $Enums.OperationalStatus | null
   relationshipStatus: $Enums.RelationshipStatus | null
+  invoiceRequired: boolean | null
   isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -57,6 +58,7 @@ export type CustomerMaxAggregateOutputType = {
   billingEmail: string | null
   operationalStatus: $Enums.OperationalStatus | null
   relationshipStatus: $Enums.RelationshipStatus | null
+  invoiceRequired: boolean | null
   isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -76,6 +78,7 @@ export type CustomerCountAggregateOutputType = {
   billingEmail: number
   operationalStatus: number
   relationshipStatus: number
+  invoiceRequired: number
   isDeleted: number
   createdAt: number
   updatedAt: number
@@ -97,6 +100,7 @@ export type CustomerMinAggregateInputType = {
   billingEmail?: true
   operationalStatus?: true
   relationshipStatus?: true
+  invoiceRequired?: true
   isDeleted?: true
   createdAt?: true
   updatedAt?: true
@@ -116,6 +120,7 @@ export type CustomerMaxAggregateInputType = {
   billingEmail?: true
   operationalStatus?: true
   relationshipStatus?: true
+  invoiceRequired?: true
   isDeleted?: true
   createdAt?: true
   updatedAt?: true
@@ -135,6 +140,7 @@ export type CustomerCountAggregateInputType = {
   billingEmail?: true
   operationalStatus?: true
   relationshipStatus?: true
+  invoiceRequired?: true
   isDeleted?: true
   createdAt?: true
   updatedAt?: true
@@ -227,6 +233,7 @@ export type CustomerGroupByOutputType = {
   billingEmail: string | null
   operationalStatus: $Enums.OperationalStatus | null
   relationshipStatus: $Enums.RelationshipStatus | null
+  invoiceRequired: boolean
   isDeleted: boolean
   createdAt: Date
   updatedAt: Date
@@ -267,12 +274,14 @@ export type CustomerWhereInput = {
   billingEmail?: Prisma.StringNullableFilter<"Customer"> | string | null
   operationalStatus?: Prisma.EnumOperationalStatusNullableFilter<"Customer"> | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.EnumRelationshipStatusNullableFilter<"Customer"> | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFilter<"Customer"> | boolean
   isDeleted?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   agreements?: Prisma.CommercialAgreementListRelationFilter
   servicePeriods?: Prisma.ServicePeriodListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  invoices?: Prisma.InvoiceListRelationFilter
 }
 
 export type CustomerOrderByWithRelationInput = {
@@ -289,12 +298,14 @@ export type CustomerOrderByWithRelationInput = {
   billingEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   operationalStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   relationshipStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceRequired?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   agreements?: Prisma.CommercialAgreementOrderByRelationAggregateInput
   servicePeriods?: Prisma.ServicePeriodOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
+  invoices?: Prisma.InvoiceOrderByRelationAggregateInput
 }
 
 export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -314,12 +325,14 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   billingEmail?: Prisma.StringNullableFilter<"Customer"> | string | null
   operationalStatus?: Prisma.EnumOperationalStatusNullableFilter<"Customer"> | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.EnumRelationshipStatusNullableFilter<"Customer"> | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFilter<"Customer"> | boolean
   isDeleted?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   agreements?: Prisma.CommercialAgreementListRelationFilter
   servicePeriods?: Prisma.ServicePeriodListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  invoices?: Prisma.InvoiceListRelationFilter
 }, "id">
 
 export type CustomerOrderByWithAggregationInput = {
@@ -336,6 +349,7 @@ export type CustomerOrderByWithAggregationInput = {
   billingEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   operationalStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   relationshipStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceRequired?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -361,6 +375,7 @@ export type CustomerScalarWhereWithAggregatesInput = {
   billingEmail?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   operationalStatus?: Prisma.EnumOperationalStatusNullableWithAggregatesFilter<"Customer"> | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.EnumRelationshipStatusNullableWithAggregatesFilter<"Customer"> | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
   isDeleted?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
@@ -380,12 +395,14 @@ export type CustomerCreateInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementCreateNestedManyWithoutCustomerInput
   servicePeriods?: Prisma.ServicePeriodCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateInput = {
@@ -402,12 +419,14 @@ export type CustomerUncheckedCreateInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementUncheckedCreateNestedManyWithoutCustomerInput
   servicePeriods?: Prisma.ServicePeriodUncheckedCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUpdateInput = {
@@ -424,12 +443,14 @@ export type CustomerUpdateInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUpdateManyWithoutCustomerNestedInput
   servicePeriods?: Prisma.ServicePeriodUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateInput = {
@@ -446,12 +467,14 @@ export type CustomerUncheckedUpdateInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUncheckedUpdateManyWithoutCustomerNestedInput
   servicePeriods?: Prisma.ServicePeriodUncheckedUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateManyInput = {
@@ -468,6 +491,7 @@ export type CustomerCreateManyInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -487,6 +511,7 @@ export type CustomerUpdateManyMutationInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -506,6 +531,7 @@ export type CustomerUncheckedUpdateManyInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -525,6 +551,7 @@ export type CustomerCountOrderByAggregateInput = {
   billingEmail?: Prisma.SortOrder
   operationalStatus?: Prisma.SortOrder
   relationshipStatus?: Prisma.SortOrder
+  invoiceRequired?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -544,6 +571,7 @@ export type CustomerMaxOrderByAggregateInput = {
   billingEmail?: Prisma.SortOrder
   operationalStatus?: Prisma.SortOrder
   relationshipStatus?: Prisma.SortOrder
+  invoiceRequired?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -563,6 +591,7 @@ export type CustomerMinOrderByAggregateInput = {
   billingEmail?: Prisma.SortOrder
   operationalStatus?: Prisma.SortOrder
   relationshipStatus?: Prisma.SortOrder
+  invoiceRequired?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -627,6 +656,20 @@ export type CustomerUpdateOneRequiredWithoutPaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutPaymentsInput, Prisma.CustomerUpdateWithoutPaymentsInput>, Prisma.CustomerUncheckedUpdateWithoutPaymentsInput>
 }
 
+export type CustomerCreateNestedOneWithoutInvoicesInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutInvoicesInput, Prisma.CustomerUncheckedCreateWithoutInvoicesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutInvoicesInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneRequiredWithoutInvoicesNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutInvoicesInput, Prisma.CustomerUncheckedCreateWithoutInvoicesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutInvoicesInput
+  upsert?: Prisma.CustomerUpsertWithoutInvoicesInput
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutInvoicesInput, Prisma.CustomerUpdateWithoutInvoicesInput>, Prisma.CustomerUncheckedUpdateWithoutInvoicesInput>
+}
+
 export type CustomerCreateWithoutAgreementsInput = {
   id?: string
   commercialName: string
@@ -641,11 +684,13 @@ export type CustomerCreateWithoutAgreementsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   servicePeriods?: Prisma.ServicePeriodCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutAgreementsInput = {
@@ -662,11 +707,13 @@ export type CustomerUncheckedCreateWithoutAgreementsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   servicePeriods?: Prisma.ServicePeriodUncheckedCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutAgreementsInput = {
@@ -699,11 +746,13 @@ export type CustomerUpdateWithoutAgreementsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   servicePeriods?: Prisma.ServicePeriodUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutAgreementsInput = {
@@ -720,11 +769,13 @@ export type CustomerUncheckedUpdateWithoutAgreementsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   servicePeriods?: Prisma.ServicePeriodUncheckedUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutServicePeriodsInput = {
@@ -741,11 +792,13 @@ export type CustomerCreateWithoutServicePeriodsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutServicePeriodsInput = {
@@ -762,11 +815,13 @@ export type CustomerUncheckedCreateWithoutServicePeriodsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementUncheckedCreateNestedManyWithoutCustomerInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutServicePeriodsInput = {
@@ -799,11 +854,13 @@ export type CustomerUpdateWithoutServicePeriodsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutServicePeriodsInput = {
@@ -820,11 +877,13 @@ export type CustomerUncheckedUpdateWithoutServicePeriodsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUncheckedUpdateManyWithoutCustomerNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutPaymentsInput = {
@@ -841,11 +900,13 @@ export type CustomerCreateWithoutPaymentsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementCreateNestedManyWithoutCustomerInput
   servicePeriods?: Prisma.ServicePeriodCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutPaymentsInput = {
@@ -862,11 +923,13 @@ export type CustomerUncheckedCreateWithoutPaymentsInput = {
   billingEmail?: string | null
   operationalStatus?: $Enums.OperationalStatus | null
   relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   agreements?: Prisma.CommercialAgreementUncheckedCreateNestedManyWithoutCustomerInput
   servicePeriods?: Prisma.ServicePeriodUncheckedCreateNestedManyWithoutCustomerInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutPaymentsInput = {
@@ -899,11 +962,13 @@ export type CustomerUpdateWithoutPaymentsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUpdateManyWithoutCustomerNestedInput
   servicePeriods?: Prisma.ServicePeriodUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutPaymentsInput = {
@@ -920,11 +985,121 @@ export type CustomerUncheckedUpdateWithoutPaymentsInput = {
   billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
   relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   agreements?: Prisma.CommercialAgreementUncheckedUpdateManyWithoutCustomerNestedInput
   servicePeriods?: Prisma.ServicePeriodUncheckedUpdateManyWithoutCustomerNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutInvoicesInput = {
+  id?: string
+  commercialName: string
+  alias?: string | null
+  adminContact?: string | null
+  billingContact?: string | null
+  notes?: string | null
+  legalName?: string | null
+  rfc?: string | null
+  fiscalRegime?: string | null
+  cfdiUsage?: string | null
+  billingEmail?: string | null
+  operationalStatus?: $Enums.OperationalStatus | null
+  relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
+  isDeleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agreements?: Prisma.CommercialAgreementCreateNestedManyWithoutCustomerInput
+  servicePeriods?: Prisma.ServicePeriodCreateNestedManyWithoutCustomerInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutInvoicesInput = {
+  id?: string
+  commercialName: string
+  alias?: string | null
+  adminContact?: string | null
+  billingContact?: string | null
+  notes?: string | null
+  legalName?: string | null
+  rfc?: string | null
+  fiscalRegime?: string | null
+  cfdiUsage?: string | null
+  billingEmail?: string | null
+  operationalStatus?: $Enums.OperationalStatus | null
+  relationshipStatus?: $Enums.RelationshipStatus | null
+  invoiceRequired?: boolean
+  isDeleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agreements?: Prisma.CommercialAgreementUncheckedCreateNestedManyWithoutCustomerInput
+  servicePeriods?: Prisma.ServicePeriodUncheckedCreateNestedManyWithoutCustomerInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutInvoicesInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutInvoicesInput, Prisma.CustomerUncheckedCreateWithoutInvoicesInput>
+}
+
+export type CustomerUpsertWithoutInvoicesInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutInvoicesInput, Prisma.CustomerUncheckedUpdateWithoutInvoicesInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutInvoicesInput, Prisma.CustomerUncheckedCreateWithoutInvoicesInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutInvoicesInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutInvoicesInput, Prisma.CustomerUncheckedUpdateWithoutInvoicesInput>
+}
+
+export type CustomerUpdateWithoutInvoicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  commercialName?: Prisma.StringFieldUpdateOperationsInput | string
+  alias?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  adminContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rfc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fiscalRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cfdiUsage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
+  relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agreements?: Prisma.CommercialAgreementUpdateManyWithoutCustomerNestedInput
+  servicePeriods?: Prisma.ServicePeriodUpdateManyWithoutCustomerNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutInvoicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  commercialName?: Prisma.StringFieldUpdateOperationsInput | string
+  alias?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  adminContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rfc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fiscalRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cfdiUsage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  operationalStatus?: Prisma.NullableEnumOperationalStatusFieldUpdateOperationsInput | $Enums.OperationalStatus | null
+  relationshipStatus?: Prisma.NullableEnumRelationshipStatusFieldUpdateOperationsInput | $Enums.RelationshipStatus | null
+  invoiceRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agreements?: Prisma.CommercialAgreementUncheckedUpdateManyWithoutCustomerNestedInput
+  servicePeriods?: Prisma.ServicePeriodUncheckedUpdateManyWithoutCustomerNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 
@@ -936,12 +1111,14 @@ export type CustomerCountOutputType = {
   agreements: number
   servicePeriods: number
   payments: number
+  invoices: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   agreements?: boolean | CustomerCountOutputTypeCountAgreementsArgs
   servicePeriods?: boolean | CustomerCountOutputTypeCountServicePeriodsArgs
   payments?: boolean | CustomerCountOutputTypeCountPaymentsArgs
+  invoices?: boolean | CustomerCountOutputTypeCountInvoicesArgs
 }
 
 /**
@@ -975,6 +1152,13 @@ export type CustomerCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.PaymentWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvoiceWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -990,12 +1174,14 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   billingEmail?: boolean
   operationalStatus?: boolean
   relationshipStatus?: boolean
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   agreements?: boolean | Prisma.Customer$agreementsArgs<ExtArgs>
   servicePeriods?: boolean | Prisma.Customer$servicePeriodsArgs<ExtArgs>
   payments?: boolean | Prisma.Customer$paymentsArgs<ExtArgs>
+  invoices?: boolean | Prisma.Customer$invoicesArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -1013,6 +1199,7 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   billingEmail?: boolean
   operationalStatus?: boolean
   relationshipStatus?: boolean
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1032,6 +1219,7 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   billingEmail?: boolean
   operationalStatus?: boolean
   relationshipStatus?: boolean
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1051,16 +1239,18 @@ export type CustomerSelectScalar = {
   billingEmail?: boolean
   operationalStatus?: boolean
   relationshipStatus?: boolean
+  invoiceRequired?: boolean
   isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "commercialName" | "alias" | "adminContact" | "billingContact" | "notes" | "legalName" | "rfc" | "fiscalRegime" | "cfdiUsage" | "billingEmail" | "operationalStatus" | "relationshipStatus" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "commercialName" | "alias" | "adminContact" | "billingContact" | "notes" | "legalName" | "rfc" | "fiscalRegime" | "cfdiUsage" | "billingEmail" | "operationalStatus" | "relationshipStatus" | "invoiceRequired" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   agreements?: boolean | Prisma.Customer$agreementsArgs<ExtArgs>
   servicePeriods?: boolean | Prisma.Customer$servicePeriodsArgs<ExtArgs>
   payments?: boolean | Prisma.Customer$paymentsArgs<ExtArgs>
+  invoices?: boolean | Prisma.Customer$invoicesArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1072,6 +1262,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     agreements: Prisma.$CommercialAgreementPayload<ExtArgs>[]
     servicePeriods: Prisma.$ServicePeriodPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
+    invoices: Prisma.$InvoicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1087,6 +1278,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     billingEmail: string | null
     operationalStatus: $Enums.OperationalStatus | null
     relationshipStatus: $Enums.RelationshipStatus | null
+    invoiceRequired: boolean
     isDeleted: boolean
     createdAt: Date
     updatedAt: Date
@@ -1487,6 +1679,7 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
   agreements<T extends Prisma.Customer$agreementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$agreementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommercialAgreementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   servicePeriods<T extends Prisma.Customer$servicePeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$servicePeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.Customer$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  invoices<T extends Prisma.Customer$invoicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$invoicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1529,6 +1722,7 @@ export interface CustomerFieldRefs {
   readonly billingEmail: Prisma.FieldRef<"Customer", 'String'>
   readonly operationalStatus: Prisma.FieldRef<"Customer", 'OperationalStatus'>
   readonly relationshipStatus: Prisma.FieldRef<"Customer", 'RelationshipStatus'>
+  readonly invoiceRequired: Prisma.FieldRef<"Customer", 'Boolean'>
   readonly isDeleted: Prisma.FieldRef<"Customer", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
@@ -1989,6 +2183,30 @@ export type Customer$paymentsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * Customer.invoices
+ */
+export type Customer$invoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invoice
+   */
+  select?: Prisma.InvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invoice
+   */
+  omit?: Prisma.InvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvoiceInclude<ExtArgs> | null
+  where?: Prisma.InvoiceWhereInput
+  orderBy?: Prisma.InvoiceOrderByWithRelationInput | Prisma.InvoiceOrderByWithRelationInput[]
+  cursor?: Prisma.InvoiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvoiceScalarFieldEnum | Prisma.InvoiceScalarFieldEnum[]
 }
 
 /**

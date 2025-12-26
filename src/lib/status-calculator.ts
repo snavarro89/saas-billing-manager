@@ -6,7 +6,7 @@ import type {
   CommercialAgreement,
   OperationalStatus,
   RelationshipStatus 
-} from '@/generated/prisma'
+} from '../generated/prisma/client'
 
 export type FinancialStatus = 'PAID' | 'PENDING' | 'OVERDUE' | 'NO_ACTIVE_AGREEMENT'
 
@@ -30,18 +30,26 @@ export function calculateFinancialStatus(
   }
 
   const today = new Date()
-  const activePeriod = periods.find(p => 
-    isAfter(today, p.startDate) && isBefore(today, p.endDate) && p.status === 'ACTIVE'
-  )
+  today.setHours(0, 0, 0, 0) // Normalize to start of day
+  
+  const activePeriod = periods.find(p => {
+    const start = new Date(p.startDate)
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(p.endDate)
+    end.setHours(23, 59, 59, 999) // End of day
+    return start <= today && end >= today && (p.status === 'ACTIVE' || p.status === 'EXPIRING')
+  })
 
   if (!activePeriod) {
     return 'OVERDUE'
   }
 
   // Check if there's a period after the current one
-  const futurePeriod = periods.find(p => 
-    isAfter(p.startDate, activePeriod.endDate) && p.status === 'ACTIVE'
-  )
+  const futurePeriod = periods.find(p => {
+    const periodStart = new Date(p.startDate)
+    const activeEnd = new Date(activePeriod.endDate)
+    return periodStart > activeEnd && (p.status === 'ACTIVE' || p.status === 'EXPIRING')
+  })
 
   if (futurePeriod) {
     return 'PAID'
@@ -60,51 +68,83 @@ export function calculateFinancialStatus(
 }
 
 /**
- * Calculate operational status based on service periods and grace period
+ * Calculate operational status based on service periods and payment links
+ * New rules:
+ * - ACTIVE: Active period exists AND all periods (active, past, and future) have payments linked
+ * - ACTIVE_WITH_PENDING_PAYMENT: Active period exists BUT any period (active, past, or future) has no payment linked
+ * - PENDING_RENEWAL: No active period, but has past periods
+ * - SUSPENDED/LOST: Only set manually, don't auto-calculate
  */
-export function calculateOperationalStatus(
+export async function calculateOperationalStatus(
+  customerId: string,
   periods: ServicePeriod[],
-  agreement: CommercialAgreement | null,
   currentOperationalStatus: OperationalStatus | null
-): OperationalStatus {
-  if (!agreement || !agreement.isActive) {
-    return 'CANCELLED'
+): Promise<OperationalStatus> {
+  // If manually set to SUSPENDED or LOST, don't auto-calculate
+  if (currentOperationalStatus === 'SUSPENDED' || currentOperationalStatus === 'LOST') {
+    return currentOperationalStatus
   }
 
+  // Find active period (today is between startDate and endDate)
   const today = new Date()
-  const activePeriod = periods.find(p => 
-    isAfter(today, p.startDate) && isBefore(today, p.endDate) && p.status === 'ACTIVE'
-  )
+  today.setHours(0, 0, 0, 0) // Normalize to start of day
+  
+  const activePeriod = periods.find(p => {
+    const start = new Date(p.startDate)
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(p.endDate)
+    end.setHours(23, 59, 59, 999) // End of day
+    return start <= today && end >= today && (p.status === 'ACTIVE' || p.status === 'EXPIRING')
+  })
 
-  if (!activePeriod) {
-    // Check if we're in grace period
-    const expiredPeriod = periods.find(p => 
-      isBefore(today, p.endDate) && p.status === 'EXPIRED'
-    )
-    
-    if (expiredPeriod) {
-      const gracePeriodEnd = addDays(expiredPeriod.endDate, agreement.gracePeriodDays)
-      if (isBefore(today, gracePeriodEnd)) {
-        return 'ACTIVE_WITH_DEBT'
+  if (activePeriod) {
+    // Check all periods that have started (not future periods that haven't begun)
+    // Get all payment periods for this customer's service periods
+    const allPaymentPeriods = await prisma.paymentPeriod.findMany({
+      where: {
+        servicePeriod: {
+          customerId: customerId
+        }
+      },
+      select: {
+        servicePeriodId: true
       }
+    })
+
+    const paidPeriodIds = new Set(allPaymentPeriods.map(pp => pp.servicePeriodId))
+
+    // Filter periods to only check those that have started (startDate <= today)
+    const periodsToCheck = periods.filter(period => {
+      const periodStart = new Date(period.startDate)
+      periodStart.setHours(0, 0, 0, 0)
+      return periodStart <= today
+    })
+
+    // Check if ALL started periods have payments
+    const allStartedPeriodsPaid = periodsToCheck.length > 0 && 
+      periodsToCheck.every(period => paidPeriodIds.has(period.id))
+
+    if (allStartedPeriodsPaid) {
+      // All started periods have payments, so customer is fully paid
+      return 'ACTIVE'
+    } else {
+      // At least one started period doesn't have a payment
+      return 'ACTIVE_WITH_PENDING_PAYMENT'
     }
-    
-    return 'SUSPENDED'
   }
 
-  // Check if period is expiring soon
-  const daysUntilExpiry = differenceInDays(activePeriod.endDate, today)
-  if (daysUntilExpiry <= 7 && daysUntilExpiry > 0) {
-    // Check if there's a future period
-    const futurePeriod = periods.find(p => 
-      isAfter(p.startDate, activePeriod.endDate) && p.status === 'ACTIVE'
-    )
-    if (!futurePeriod) {
-      return 'ACTIVE_WITH_DEBT'
-    }
+  // No active period - check if there are any past periods
+  const hasPastPeriods = periods.some(p => {
+    const end = new Date(p.endDate)
+    return end < today
+  })
+
+  if (hasPastPeriods) {
+    return 'PENDING_RENEWAL'
   }
 
-  return 'ACTIVE'
+  // No periods at all - default to ACTIVE_WITH_PENDING_PAYMENT (will be set when first period is created)
+  return 'ACTIVE_WITH_PENDING_PAYMENT'
 }
 
 /**
@@ -119,9 +159,11 @@ export function calculateDaysOverdue(
   }
 
   const today = new Date()
-  const activePeriod = periods.find(p => 
-    isAfter(today, p.startDate) && isBefore(today, p.endDate) && p.status === 'ACTIVE'
-  )
+  const activePeriod = periods.find(p => {
+    const start = new Date(p.startDate)
+    const end = new Date(p.endDate)
+    return start <= today && end >= today && p.status === 'ACTIVE'
+  })
 
   if (!activePeriod) {
     const expiredPeriod = periods
@@ -148,9 +190,11 @@ export function getNextPaymentDue(
   }
 
   const today = new Date()
-  const activePeriod = periods.find(p => 
-    isAfter(today, p.startDate) && isBefore(today, p.endDate) && p.status === 'ACTIVE'
-  )
+  const activePeriod = periods.find(p => {
+    const start = new Date(p.startDate)
+    const end = new Date(p.endDate)
+    return start <= today && end >= today && p.status === 'ACTIVE'
+  })
 
   if (activePeriod) {
     return activePeriod.endDate
@@ -194,9 +238,9 @@ export async function calculateCustomerStatuses(
   const periods = customer.servicePeriods
 
   const financialStatus = calculateFinancialStatus(periods, agreement)
-  const operationalStatus = calculateOperationalStatus(
+  const operationalStatus = await calculateOperationalStatus(
+    customerId,
     periods,
-    agreement,
     customer.operationalStatus
   )
   const daysOverdue = calculateDaysOverdue(periods, agreement)

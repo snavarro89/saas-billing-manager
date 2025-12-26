@@ -20,6 +20,7 @@ export default function NewCustomerPage() {
     fiscalRegime: "",
     cfdiUsage: "",
     billingEmail: "",
+    invoiceRequired: false,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,6 +203,20 @@ export default function NewCustomerPage() {
                   }
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="invoiceRequired"
+                  checked={formData.invoiceRequired}
+                  onChange={(e) =>
+                    setFormData({ ...formData, invoiceRequired: e.target.checked })
+                  }
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="invoiceRequired" className="ml-2 block text-sm text-gray-700">
+                  Invoice required to receive payment
+                </label>
               </div>
             </CardContent>
           </Card>

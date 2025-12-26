@@ -42,6 +42,8 @@ export type PaymentMinAggregateOutputType = {
   currency: string | null
   method: string | null
   reference: string | null
+  screenshotUrl: string | null
+  invoiceId: string | null
   status: $Enums.PaymentStatus | null
   notes: string | null
   createdAt: Date | null
@@ -56,6 +58,8 @@ export type PaymentMaxAggregateOutputType = {
   currency: string | null
   method: string | null
   reference: string | null
+  screenshotUrl: string | null
+  invoiceId: string | null
   status: $Enums.PaymentStatus | null
   notes: string | null
   createdAt: Date | null
@@ -70,6 +74,8 @@ export type PaymentCountAggregateOutputType = {
   currency: number
   method: number
   reference: number
+  screenshotUrl: number
+  invoiceId: number
   status: number
   notes: number
   createdAt: number
@@ -94,6 +100,8 @@ export type PaymentMinAggregateInputType = {
   currency?: true
   method?: true
   reference?: true
+  screenshotUrl?: true
+  invoiceId?: true
   status?: true
   notes?: true
   createdAt?: true
@@ -108,6 +116,8 @@ export type PaymentMaxAggregateInputType = {
   currency?: true
   method?: true
   reference?: true
+  screenshotUrl?: true
+  invoiceId?: true
   status?: true
   notes?: true
   createdAt?: true
@@ -122,6 +132,8 @@ export type PaymentCountAggregateInputType = {
   currency?: true
   method?: true
   reference?: true
+  screenshotUrl?: true
+  invoiceId?: true
   status?: true
   notes?: true
   createdAt?: true
@@ -223,6 +235,8 @@ export type PaymentGroupByOutputType = {
   currency: string
   method: string
   reference: string | null
+  screenshotUrl: string | null
+  invoiceId: string | null
   status: $Enums.PaymentStatus
   notes: string | null
   createdAt: Date
@@ -260,12 +274,16 @@ export type PaymentWhereInput = {
   currency?: Prisma.StringFilter<"Payment"> | string
   method?: Prisma.StringFilter<"Payment"> | string
   reference?: Prisma.StringNullableFilter<"Payment"> | string | null
+  screenshotUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  invoiceId?: Prisma.StringNullableFilter<"Payment"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   notes?: Prisma.StringNullableFilter<"Payment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
+  invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
+  paidInvoices?: Prisma.InvoiceListRelationFilter
 }
 
 export type PaymentOrderByWithRelationInput = {
@@ -276,12 +294,16 @@ export type PaymentOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   method?: Prisma.SortOrder
   reference?: Prisma.SortOrderInput | Prisma.SortOrder
+  screenshotUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.CustomerOrderByWithRelationInput
+  invoice?: Prisma.InvoiceOrderByWithRelationInput
   paymentPeriods?: Prisma.PaymentPeriodOrderByRelationAggregateInput
+  paidInvoices?: Prisma.InvoiceOrderByRelationAggregateInput
 }
 
 export type PaymentWhereUniqueInput = Prisma.AtLeast<{
@@ -295,12 +317,16 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.StringFilter<"Payment"> | string
   method?: Prisma.StringFilter<"Payment"> | string
   reference?: Prisma.StringNullableFilter<"Payment"> | string | null
+  screenshotUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  invoiceId?: Prisma.StringNullableFilter<"Payment"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   notes?: Prisma.StringNullableFilter<"Payment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
+  invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
+  paidInvoices?: Prisma.InvoiceListRelationFilter
 }, "id">
 
 export type PaymentOrderByWithAggregationInput = {
@@ -311,6 +337,8 @@ export type PaymentOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   method?: Prisma.SortOrder
   reference?: Prisma.SortOrderInput | Prisma.SortOrder
+  screenshotUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -333,6 +361,8 @@ export type PaymentScalarWhereWithAggregatesInput = {
   currency?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   method?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   reference?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  screenshotUrl?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  invoiceId?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   status?: Prisma.EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
   notes?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Payment"> | Date | string
@@ -346,12 +376,15 @@ export type PaymentCreateInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutPaymentsInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutPaymentsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentUncheckedCreateInput = {
@@ -362,11 +395,14 @@ export type PaymentUncheckedCreateInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentUpdateInput = {
@@ -376,12 +412,15 @@ export type PaymentUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutPaymentsNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutPaymentsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUpdateManyWithoutPaidByPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateInput = {
@@ -392,11 +431,14 @@ export type PaymentUncheckedUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUncheckedUpdateManyWithoutPaidByPaymentNestedInput
 }
 
 export type PaymentCreateManyInput = {
@@ -407,6 +449,8 @@ export type PaymentCreateManyInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
@@ -420,6 +464,7 @@ export type PaymentUpdateManyMutationInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -434,6 +479,8 @@ export type PaymentUncheckedUpdateManyInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -458,6 +505,8 @@ export type PaymentCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   method?: Prisma.SortOrder
   reference?: Prisma.SortOrder
+  screenshotUrl?: Prisma.SortOrder
+  invoiceId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -476,6 +525,8 @@ export type PaymentMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   method?: Prisma.SortOrder
   reference?: Prisma.SortOrder
+  screenshotUrl?: Prisma.SortOrder
+  invoiceId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -490,6 +541,8 @@ export type PaymentMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   method?: Prisma.SortOrder
   reference?: Prisma.SortOrder
+  screenshotUrl?: Prisma.SortOrder
+  invoiceId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -503,6 +556,11 @@ export type PaymentSumOrderByAggregateInput = {
 export type PaymentScalarRelationFilter = {
   is?: Prisma.PaymentWhereInput
   isNot?: Prisma.PaymentWhereInput
+}
+
+export type PaymentNullableScalarRelationFilter = {
+  is?: Prisma.PaymentWhereInput | null
+  isNot?: Prisma.PaymentWhereInput | null
 }
 
 export type PaymentCreateNestedManyWithoutCustomerInput = {
@@ -565,6 +623,64 @@ export type PaymentUpdateOneRequiredWithoutPaymentPeriodsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentUpdateToOneWithWhereWithoutPaymentPeriodsInput, Prisma.PaymentUpdateWithoutPaymentPeriodsInput>, Prisma.PaymentUncheckedUpdateWithoutPaymentPeriodsInput>
 }
 
+export type PaymentCreateNestedOneWithoutPaidInvoicesInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedCreateWithoutPaidInvoicesInput>
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutPaidInvoicesInput
+  connect?: Prisma.PaymentWhereUniqueInput
+}
+
+export type PaymentCreateNestedManyWithoutInvoiceInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput> | Prisma.PaymentCreateWithoutInvoiceInput[] | Prisma.PaymentUncheckedCreateWithoutInvoiceInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutInvoiceInput | Prisma.PaymentCreateOrConnectWithoutInvoiceInput[]
+  createMany?: Prisma.PaymentCreateManyInvoiceInputEnvelope
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+}
+
+export type PaymentUncheckedCreateNestedManyWithoutInvoiceInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput> | Prisma.PaymentCreateWithoutInvoiceInput[] | Prisma.PaymentUncheckedCreateWithoutInvoiceInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutInvoiceInput | Prisma.PaymentCreateOrConnectWithoutInvoiceInput[]
+  createMany?: Prisma.PaymentCreateManyInvoiceInputEnvelope
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+}
+
+export type PaymentUpdateOneWithoutPaidInvoicesNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedCreateWithoutPaidInvoicesInput>
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutPaidInvoicesInput
+  upsert?: Prisma.PaymentUpsertWithoutPaidInvoicesInput
+  disconnect?: Prisma.PaymentWhereInput | boolean
+  delete?: Prisma.PaymentWhereInput | boolean
+  connect?: Prisma.PaymentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentUpdateToOneWithWhereWithoutPaidInvoicesInput, Prisma.PaymentUpdateWithoutPaidInvoicesInput>, Prisma.PaymentUncheckedUpdateWithoutPaidInvoicesInput>
+}
+
+export type PaymentUpdateManyWithoutInvoiceNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput> | Prisma.PaymentCreateWithoutInvoiceInput[] | Prisma.PaymentUncheckedCreateWithoutInvoiceInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutInvoiceInput | Prisma.PaymentCreateOrConnectWithoutInvoiceInput[]
+  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutInvoiceInput | Prisma.PaymentUpsertWithWhereUniqueWithoutInvoiceInput[]
+  createMany?: Prisma.PaymentCreateManyInvoiceInputEnvelope
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutInvoiceInput | Prisma.PaymentUpdateWithWhereUniqueWithoutInvoiceInput[]
+  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutInvoiceInput | Prisma.PaymentUpdateManyWithWhereWithoutInvoiceInput[]
+  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+}
+
+export type PaymentUncheckedUpdateManyWithoutInvoiceNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput> | Prisma.PaymentCreateWithoutInvoiceInput[] | Prisma.PaymentUncheckedCreateWithoutInvoiceInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutInvoiceInput | Prisma.PaymentCreateOrConnectWithoutInvoiceInput[]
+  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutInvoiceInput | Prisma.PaymentUpsertWithWhereUniqueWithoutInvoiceInput[]
+  createMany?: Prisma.PaymentCreateManyInvoiceInputEnvelope
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutInvoiceInput | Prisma.PaymentUpdateWithWhereUniqueWithoutInvoiceInput[]
+  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutInvoiceInput | Prisma.PaymentUpdateManyWithWhereWithoutInvoiceInput[]
+  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+}
+
 export type PaymentCreateWithoutCustomerInput = {
   id?: string
   paymentDate?: Date | string
@@ -572,11 +688,14 @@ export type PaymentCreateWithoutCustomerInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutPaymentsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentUncheckedCreateWithoutCustomerInput = {
@@ -586,11 +705,14 @@ export type PaymentUncheckedCreateWithoutCustomerInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentCreateOrConnectWithoutCustomerInput = {
@@ -630,6 +752,8 @@ export type PaymentScalarWhereInput = {
   currency?: Prisma.StringFilter<"Payment"> | string
   method?: Prisma.StringFilter<"Payment"> | string
   reference?: Prisma.StringNullableFilter<"Payment"> | string | null
+  screenshotUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
+  invoiceId?: Prisma.StringNullableFilter<"Payment"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   notes?: Prisma.StringNullableFilter<"Payment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
@@ -643,11 +767,14 @@ export type PaymentCreateWithoutPaymentPeriodsInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutPaymentsInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutPaymentsInput
+  paidInvoices?: Prisma.InvoiceCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentUncheckedCreateWithoutPaymentPeriodsInput = {
@@ -658,10 +785,13 @@ export type PaymentUncheckedCreateWithoutPaymentPeriodsInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  paidInvoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutPaidByPaymentInput
 }
 
 export type PaymentCreateOrConnectWithoutPaymentPeriodsInput = {
@@ -687,11 +817,14 @@ export type PaymentUpdateWithoutPaymentPeriodsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutPaymentsNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutPaymentsNestedInput
+  paidInvoices?: Prisma.InvoiceUpdateManyWithoutPaidByPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateWithoutPaymentPeriodsInput = {
@@ -702,10 +835,157 @@ export type PaymentUncheckedUpdateWithoutPaymentPeriodsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paidInvoices?: Prisma.InvoiceUncheckedUpdateManyWithoutPaidByPaymentNestedInput
+}
+
+export type PaymentCreateWithoutPaidInvoicesInput = {
+  id?: string
+  paymentDate?: Date | string
+  amount: number
+  currency?: string
+  method: string
+  reference?: string | null
+  screenshotUrl?: string | null
+  status?: $Enums.PaymentStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutPaymentsInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutPaymentsInput
+  paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutPaymentInput
+}
+
+export type PaymentUncheckedCreateWithoutPaidInvoicesInput = {
+  id?: string
+  customerId: string
+  paymentDate?: Date | string
+  amount: number
+  currency?: string
+  method: string
+  reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
+  status?: $Enums.PaymentStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutPaymentInput
+}
+
+export type PaymentCreateOrConnectWithoutPaidInvoicesInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedCreateWithoutPaidInvoicesInput>
+}
+
+export type PaymentCreateWithoutInvoiceInput = {
+  id?: string
+  paymentDate?: Date | string
+  amount: number
+  currency?: string
+  method: string
+  reference?: string | null
+  screenshotUrl?: string | null
+  status?: $Enums.PaymentStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutPaymentsInput
+  paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceCreateNestedManyWithoutPaidByPaymentInput
+}
+
+export type PaymentUncheckedCreateWithoutInvoiceInput = {
+  id?: string
+  customerId: string
+  paymentDate?: Date | string
+  amount: number
+  currency?: string
+  method: string
+  reference?: string | null
+  screenshotUrl?: string | null
+  status?: $Enums.PaymentStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutPaymentInput
+  paidInvoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutPaidByPaymentInput
+}
+
+export type PaymentCreateOrConnectWithoutInvoiceInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput>
+}
+
+export type PaymentCreateManyInvoiceInputEnvelope = {
+  data: Prisma.PaymentCreateManyInvoiceInput | Prisma.PaymentCreateManyInvoiceInput[]
+  skipDuplicates?: boolean
+}
+
+export type PaymentUpsertWithoutPaidInvoicesInput = {
+  update: Prisma.XOR<Prisma.PaymentUpdateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedUpdateWithoutPaidInvoicesInput>
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedCreateWithoutPaidInvoicesInput>
+  where?: Prisma.PaymentWhereInput
+}
+
+export type PaymentUpdateToOneWithWhereWithoutPaidInvoicesInput = {
+  where?: Prisma.PaymentWhereInput
+  data: Prisma.XOR<Prisma.PaymentUpdateWithoutPaidInvoicesInput, Prisma.PaymentUncheckedUpdateWithoutPaidInvoicesInput>
+}
+
+export type PaymentUpdateWithoutPaidInvoicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  method?: Prisma.StringFieldUpdateOperationsInput | string
+  reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutPaymentsNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutPaymentsNestedInput
+  paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutPaymentNestedInput
+}
+
+export type PaymentUncheckedUpdateWithoutPaidInvoicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  method?: Prisma.StringFieldUpdateOperationsInput | string
+  reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutPaymentNestedInput
+}
+
+export type PaymentUpsertWithWhereUniqueWithoutInvoiceInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  update: Prisma.XOR<Prisma.PaymentUpdateWithoutInvoiceInput, Prisma.PaymentUncheckedUpdateWithoutInvoiceInput>
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutInvoiceInput, Prisma.PaymentUncheckedCreateWithoutInvoiceInput>
+}
+
+export type PaymentUpdateWithWhereUniqueWithoutInvoiceInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  data: Prisma.XOR<Prisma.PaymentUpdateWithoutInvoiceInput, Prisma.PaymentUncheckedUpdateWithoutInvoiceInput>
+}
+
+export type PaymentUpdateManyWithWhereWithoutInvoiceInput = {
+  where: Prisma.PaymentScalarWhereInput
+  data: Prisma.XOR<Prisma.PaymentUpdateManyMutationInput, Prisma.PaymentUncheckedUpdateManyWithoutInvoiceInput>
 }
 
 export type PaymentCreateManyCustomerInput = {
@@ -715,6 +995,8 @@ export type PaymentCreateManyCustomerInput = {
   currency?: string
   method: string
   reference?: string | null
+  screenshotUrl?: string | null
+  invoiceId?: string | null
   status?: $Enums.PaymentStatus
   notes?: string | null
   createdAt?: Date | string
@@ -728,11 +1010,14 @@ export type PaymentUpdateWithoutCustomerInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invoice?: Prisma.InvoiceUpdateOneWithoutPaymentsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUpdateManyWithoutPaidByPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateWithoutCustomerInput = {
@@ -742,11 +1027,14 @@ export type PaymentUncheckedUpdateWithoutCustomerInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUncheckedUpdateManyWithoutPaidByPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateManyWithoutCustomerInput = {
@@ -756,6 +1044,72 @@ export type PaymentUncheckedUpdateManyWithoutCustomerInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   method?: Prisma.StringFieldUpdateOperationsInput | string
   reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  invoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PaymentCreateManyInvoiceInput = {
+  id?: string
+  customerId: string
+  paymentDate?: Date | string
+  amount: number
+  currency?: string
+  method: string
+  reference?: string | null
+  screenshotUrl?: string | null
+  status?: $Enums.PaymentStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PaymentUpdateWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  method?: Prisma.StringFieldUpdateOperationsInput | string
+  reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutPaymentsNestedInput
+  paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUpdateManyWithoutPaidByPaymentNestedInput
+}
+
+export type PaymentUncheckedUpdateWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  method?: Prisma.StringFieldUpdateOperationsInput | string
+  reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutPaymentNestedInput
+  paidInvoices?: Prisma.InvoiceUncheckedUpdateManyWithoutPaidByPaymentNestedInput
+}
+
+export type PaymentUncheckedUpdateManyWithoutInvoiceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  method?: Prisma.StringFieldUpdateOperationsInput | string
+  reference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenshotUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -769,10 +1123,12 @@ export type PaymentUncheckedUpdateManyWithoutCustomerInput = {
 
 export type PaymentCountOutputType = {
   paymentPeriods: number
+  paidInvoices: number
 }
 
 export type PaymentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   paymentPeriods?: boolean | PaymentCountOutputTypeCountPaymentPeriodsArgs
+  paidInvoices?: boolean | PaymentCountOutputTypeCountPaidInvoicesArgs
 }
 
 /**
@@ -792,6 +1148,13 @@ export type PaymentCountOutputTypeCountPaymentPeriodsArgs<ExtArgs extends runtim
   where?: Prisma.PaymentPeriodWhereInput
 }
 
+/**
+ * PaymentCountOutputType without action
+ */
+export type PaymentCountOutputTypeCountPaidInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvoiceWhereInput
+}
+
 
 export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -801,12 +1164,16 @@ export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   currency?: boolean
   method?: boolean
   reference?: boolean
+  screenshotUrl?: boolean
+  invoiceId?: boolean
   status?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.Payment$paymentPeriodsArgs<ExtArgs>
+  paidInvoices?: boolean | Prisma.Payment$paidInvoicesArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
 
@@ -818,11 +1185,14 @@ export type PaymentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   currency?: boolean
   method?: boolean
   reference?: boolean
+  screenshotUrl?: boolean
+  invoiceId?: boolean
   status?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
 
 export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -833,11 +1203,14 @@ export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   currency?: boolean
   method?: boolean
   reference?: boolean
+  screenshotUrl?: boolean
+  invoiceId?: boolean
   status?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
 
 export type PaymentSelectScalar = {
@@ -848,30 +1221,38 @@ export type PaymentSelectScalar = {
   currency?: boolean
   method?: boolean
   reference?: boolean
+  screenshotUrl?: boolean
+  invoiceId?: boolean
   status?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "paymentDate" | "amount" | "currency" | "method" | "reference" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
+export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "paymentDate" | "amount" | "currency" | "method" | "reference" | "screenshotUrl" | "invoiceId" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
 export type PaymentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.Payment$paymentPeriodsArgs<ExtArgs>
+  paidInvoices?: boolean | Prisma.Payment$paidInvoicesArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PaymentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
 }
 export type PaymentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  invoice?: boolean | Prisma.Payment$invoiceArgs<ExtArgs>
 }
 
 export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Payment"
   objects: {
     customer: Prisma.$CustomerPayload<ExtArgs>
+    invoice: Prisma.$InvoicePayload<ExtArgs> | null
     paymentPeriods: Prisma.$PaymentPeriodPayload<ExtArgs>[]
+    paidInvoices: Prisma.$InvoicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -881,6 +1262,8 @@ export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     currency: string
     method: string
     reference: string | null
+    screenshotUrl: string | null
+    invoiceId: string | null
     status: $Enums.PaymentStatus
     notes: string | null
     createdAt: Date
@@ -1280,7 +1663,9 @@ readonly fields: PaymentFieldRefs;
 export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customer<T extends Prisma.CustomerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CustomerDefaultArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  invoice<T extends Prisma.Payment$invoiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Payment$invoiceArgs<ExtArgs>>): Prisma.Prisma__InvoiceClient<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   paymentPeriods<T extends Prisma.Payment$paymentPeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Payment$paymentPeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  paidInvoices<T extends Prisma.Payment$paidInvoicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Payment$paidInvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1317,6 +1702,8 @@ export interface PaymentFieldRefs {
   readonly currency: Prisma.FieldRef<"Payment", 'String'>
   readonly method: Prisma.FieldRef<"Payment", 'String'>
   readonly reference: Prisma.FieldRef<"Payment", 'String'>
+  readonly screenshotUrl: Prisma.FieldRef<"Payment", 'String'>
+  readonly invoiceId: Prisma.FieldRef<"Payment", 'String'>
   readonly status: Prisma.FieldRef<"Payment", 'PaymentStatus'>
   readonly notes: Prisma.FieldRef<"Payment", 'String'>
   readonly createdAt: Prisma.FieldRef<"Payment", 'DateTime'>
@@ -1717,6 +2104,25 @@ export type PaymentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Payment.invoice
+ */
+export type Payment$invoiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invoice
+   */
+  select?: Prisma.InvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invoice
+   */
+  omit?: Prisma.InvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvoiceInclude<ExtArgs> | null
+  where?: Prisma.InvoiceWhereInput
+}
+
+/**
  * Payment.paymentPeriods
  */
 export type Payment$paymentPeriodsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1738,6 +2144,30 @@ export type Payment$paymentPeriodsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.PaymentPeriodScalarFieldEnum | Prisma.PaymentPeriodScalarFieldEnum[]
+}
+
+/**
+ * Payment.paidInvoices
+ */
+export type Payment$paidInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invoice
+   */
+  select?: Prisma.InvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invoice
+   */
+  omit?: Prisma.InvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvoiceInclude<ExtArgs> | null
+  where?: Prisma.InvoiceWhereInput
+  orderBy?: Prisma.InvoiceOrderByWithRelationInput | Prisma.InvoiceOrderByWithRelationInput[]
+  cursor?: Prisma.InvoiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvoiceScalarFieldEnum | Prisma.InvoiceScalarFieldEnum[]
 }
 
 /**
