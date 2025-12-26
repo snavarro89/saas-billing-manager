@@ -3,17 +3,11 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-// Production (Vercel/Prisma Postgres): uses connection pooler for runtime queries
-const databaseUrl = process.env["PRISMA_POSTGRES_PRISMA_DATABASE_URL"] || process.env["DATABASE_URL"];
-
-// Production: uses direct connection for migrations
-const directUrl = process.env["PRISMA_POSTGRES_POSTGRES_URL"] || process.env["DATABASE_URL"];
+// For migrations, use direct connection (required for schema changes)
+// Runtime queries use connection pooler (configured in src/lib/db.ts)
+const databaseUrl = process.env["PRISMA_POSTGRES_POSTGRES_URL"] || process.env["DATABASE_URL"];
 
 if (!databaseUrl) {
-  throw new Error("PRISMA_POSTGRES_PRISMA_DATABASE_URL or DATABASE_URL must be set");
-}
-
-if (!directUrl) {
   throw new Error("PRISMA_POSTGRES_POSTGRES_URL or DATABASE_URL must be set");
 }
 
@@ -24,6 +18,5 @@ export default defineConfig({
   },
   datasource: {
     url: databaseUrl,
-    directUrl: directUrl,
   },
 });
