@@ -69,3 +69,25 @@ export function getBillingCycleMonths(billingCycle: BillingCycle): number {
   }
 }
 
+/**
+ * Calculate end date based on start date and frequency
+ */
+export function calculateEndDateFromFrequency(
+  startDate: Date,
+  frequency: BillingCycle
+): Date {
+  switch (frequency) {
+    case "MONTHLY":
+      return addMonths(startDate, 1)
+    case "QUARTERLY":
+      return addMonths(startDate, 3)
+    case "SEMI_ANNUAL":
+      return addMonths(startDate, 6)
+    case "CUSTOM":
+      // For custom, default to 1 month (user can adjust manually)
+      return addMonths(startDate, 1)
+    default:
+      return addMonths(startDate, 1)
+  }
+}
+

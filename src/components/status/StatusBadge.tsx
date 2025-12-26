@@ -43,6 +43,9 @@ const statusColors: Record<string, string> = {
   // Invoice Status
   GENERATED: "bg-blue-100 text-blue-800 border-blue-200",
   CANCELLED: "bg-gray-100 text-gray-800 border-gray-200",
+  
+  // Plan Status
+  INACTIVE: "bg-gray-100 text-gray-800 border-gray-200",
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

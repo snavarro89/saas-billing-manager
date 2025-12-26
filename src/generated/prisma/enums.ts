@@ -95,3 +95,11 @@ export const InvoiceStatus = {
 } as const
 
 export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
+
+
+export const PlanType = {
+  PER_USER: 'PER_USER',
+  USAGE_BASED: 'USAGE_BASED'
+} as const
+
+export type PlanType = (typeof PlanType)[keyof typeof PlanType]

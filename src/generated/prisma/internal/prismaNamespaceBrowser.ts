@@ -57,7 +57,10 @@ export const ModelName = {
   ServicePeriod: 'ServicePeriod',
   Payment: 'Payment',
   PaymentPeriod: 'PaymentPeriod',
-  Invoice: 'Invoice'
+  Invoice: 'Invoice',
+  Plan: 'Plan',
+  PlanPricing: 'PlanPricing',
+  PlanUsageLimit: 'PlanUsageLimit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -144,6 +147,10 @@ export const ServicePeriodScalarFieldEnum = {
   billingStatus: 'billingStatus',
   suggestedInvoiceDate: 'suggestedInvoiceDate',
   notes: 'notes',
+  planId: 'planId',
+  planSnapshot: 'planSnapshot',
+  quantity: 'quantity',
+  frequency: 'frequency',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -202,12 +209,61 @@ export const InvoiceScalarFieldEnum = {
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
 
 
+export const PlanScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  isActive: 'isActive',
+  conditions: 'conditions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
+
+
+export const PlanPricingScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  frequency: 'frequency',
+  price: 'price',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanPricingScalarFieldEnum = (typeof PlanPricingScalarFieldEnum)[keyof typeof PlanPricingScalarFieldEnum]
+
+
+export const PlanUsageLimitScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  concept: 'concept',
+  limitValue: 'limitValue',
+  unit: 'unit',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanUsageLimitScalarFieldEnum = (typeof PlanUsageLimitScalarFieldEnum)[keyof typeof PlanUsageLimitScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -224,4 +280,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

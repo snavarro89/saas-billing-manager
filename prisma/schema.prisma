@@ -71,6 +71,11 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+enum PlanType {
+  PER_USER
+  USAGE_BASED
+}
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -159,6 +164,13 @@ model ServicePeriod {
   suggestedInvoiceDate DateTime?
   notes                String?
 
+  // Plan fields
+  planId        String?
+  plan          Plan?      @relation(fields: [planId], references: [id], onDelete: SetNull)
+  planSnapshot  Json?      // Snapshot of plan details at time of creation
+  quantity      Float?     // Quantity/units for per-user plans
+  frequency     BillingCycle? // Frequency selected for this period
+
   // Relations
   paymentPeriods PaymentPeriod[]
   invoice        Invoice?
@@ -246,4 +258,54 @@ model Invoice {
   @@index([servicePeriodId])
   @@index([status])
   @@index([createdAt])
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  type        PlanType
+  isActive    Boolean  @default(true)
+  conditions  String?
+
+  // Relations
+  pricing     PlanPricing[]
+  usageLimits PlanUsageLimit[]
+  servicePeriods ServicePeriod[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([type])
+}
+
+model PlanPricing {
+  id       String      @id @default(cuid())
+  planId   String
+  plan     Plan        @relation(fields: [planId], references: [id], onDelete: Cascade)
+  frequency BillingCycle
+  price    Float
+  currency String      @default("MXN")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, frequency])
+  @@index([planId])
+}
+
+model PlanUsageLimit {
+  id         String  @id @default(cuid())
+  planId     String
+  plan       Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  concept    String  // e.g., "# of services", "Storage", "IA Usage"
+  limitValue Float?  // Numeric limit value (null for "None")
+  unit       String? // e.g., "GB", "users", "services"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([planId])
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import { calculateCustomerStatuses, updatePeriodStatuses } from "@/lib/status-calculator"
+import type { PeriodStatus } from "@/types"
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +21,10 @@ export async function POST(request: Request) {
       origin,
       notes,
       suggestedInvoiceDate,
+      planId,
+      planSnapshot,
+      quantity,
+      frequency,
     } = body
 
     // Validate required fields
@@ -49,7 +54,7 @@ export async function POST(request: Request) {
     const today = new Date()
     const start = new Date(startDate)
     const end = new Date(endDate)
-    let periodStatus = "ACTIVE"
+    let periodStatus: PeriodStatus = "ACTIVE"
 
     if (end < today) {
       periodStatus = "EXPIRED"
@@ -81,6 +86,10 @@ export async function POST(request: Request) {
         billingStatus: "PENDING",
         suggestedInvoiceDate: suggestedInvoiceDate ? new Date(suggestedInvoiceDate) : new Date(startDate),
         notes,
+        planId: planId || null,
+        planSnapshot: planSnapshot || null,
+        quantity: quantity ? parseFloat(quantity) : null,
+        frequency: frequency || null,
         // Create invoice if customer requires invoices
         ...(customer.invoiceRequired ? {
           invoice: {

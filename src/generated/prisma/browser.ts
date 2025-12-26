@@ -52,3 +52,18 @@ export type PaymentPeriod = Prisma.PaymentPeriodModel
  * 
  */
 export type Invoice = Prisma.InvoiceModel
+/**
+ * Model Plan
+ * 
+ */
+export type Plan = Prisma.PlanModel
+/**
+ * Model PlanPricing
+ * 
+ */
+export type PlanPricing = Prisma.PlanPricingModel
+/**
+ * Model PlanUsageLimit
+ * 
+ */
+export type PlanUsageLimit = Prisma.PlanUsageLimitModel

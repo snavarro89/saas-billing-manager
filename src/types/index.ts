@@ -4,6 +4,9 @@ import type {
   ServicePeriod,
   Payment,
   Invoice,
+  Plan,
+  PlanPricing,
+  PlanUsageLimit,
   OperationalStatus,
   RelationshipStatus,
   BillingStatus,
@@ -12,7 +15,8 @@ import type {
   InvoiceStatus,
   BillingCycle,
   CustomerType,
-  PeriodOrigin
+  PeriodOrigin,
+  PlanType
 } from '../generated/prisma/client'
 
 export type {
@@ -21,6 +25,9 @@ export type {
   ServicePeriod,
   Payment,
   Invoice,
+  Plan,
+  PlanPricing,
+  PlanUsageLimit,
   OperationalStatus,
   RelationshipStatus,
   BillingStatus,
@@ -29,7 +36,8 @@ export type {
   InvoiceStatus,
   BillingCycle,
   CustomerType,
-  PeriodOrigin
+  PeriodOrigin,
+  PlanType
 }
 
 export interface CustomerWithRelations extends Customer {

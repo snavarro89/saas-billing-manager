@@ -28,10 +28,12 @@ export type AggregateServicePeriod = {
 
 export type ServicePeriodAvgAggregateOutputType = {
   subtotalAmount: number | null
+  quantity: number | null
 }
 
 export type ServicePeriodSumAggregateOutputType = {
   subtotalAmount: number | null
+  quantity: number | null
 }
 
 export type ServicePeriodMinAggregateOutputType = {
@@ -46,6 +48,9 @@ export type ServicePeriodMinAggregateOutputType = {
   billingStatus: $Enums.BillingStatus | null
   suggestedInvoiceDate: Date | null
   notes: string | null
+  planId: string | null
+  quantity: number | null
+  frequency: $Enums.BillingCycle | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +67,9 @@ export type ServicePeriodMaxAggregateOutputType = {
   billingStatus: $Enums.BillingStatus | null
   suggestedInvoiceDate: Date | null
   notes: string | null
+  planId: string | null
+  quantity: number | null
+  frequency: $Enums.BillingCycle | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +86,10 @@ export type ServicePeriodCountAggregateOutputType = {
   billingStatus: number
   suggestedInvoiceDate: number
   notes: number
+  planId: number
+  planSnapshot: number
+  quantity: number
+  frequency: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -86,10 +98,12 @@ export type ServicePeriodCountAggregateOutputType = {
 
 export type ServicePeriodAvgAggregateInputType = {
   subtotalAmount?: true
+  quantity?: true
 }
 
 export type ServicePeriodSumAggregateInputType = {
   subtotalAmount?: true
+  quantity?: true
 }
 
 export type ServicePeriodMinAggregateInputType = {
@@ -104,6 +118,9 @@ export type ServicePeriodMinAggregateInputType = {
   billingStatus?: true
   suggestedInvoiceDate?: true
   notes?: true
+  planId?: true
+  quantity?: true
+  frequency?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -120,6 +137,9 @@ export type ServicePeriodMaxAggregateInputType = {
   billingStatus?: true
   suggestedInvoiceDate?: true
   notes?: true
+  planId?: true
+  quantity?: true
+  frequency?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -136,6 +156,10 @@ export type ServicePeriodCountAggregateInputType = {
   billingStatus?: true
   suggestedInvoiceDate?: true
   notes?: true
+  planId?: true
+  planSnapshot?: true
+  quantity?: true
+  frequency?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -239,6 +263,10 @@ export type ServicePeriodGroupByOutputType = {
   billingStatus: $Enums.BillingStatus
   suggestedInvoiceDate: Date | null
   notes: string | null
+  planId: string | null
+  planSnapshot: runtime.JsonValue | null
+  quantity: number | null
+  frequency: $Enums.BillingCycle | null
   createdAt: Date
   updatedAt: Date
   _count: ServicePeriodCountAggregateOutputType | null
@@ -278,9 +306,14 @@ export type ServicePeriodWhereInput = {
   billingStatus?: Prisma.EnumBillingStatusFilter<"ServicePeriod"> | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.DateTimeNullableFilter<"ServicePeriod"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planId?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planSnapshot?: Prisma.JsonNullableFilter<"ServicePeriod">
+  quantity?: Prisma.FloatNullableFilter<"ServicePeriod"> | number | null
+  frequency?: Prisma.EnumBillingCycleNullableFilter<"ServicePeriod"> | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanNullableScalarRelationFilter, Prisma.PlanWhereInput> | null
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
   invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
 }
@@ -297,9 +330,14 @@ export type ServicePeriodOrderByWithRelationInput = {
   billingStatus?: Prisma.SortOrder
   suggestedInvoiceDate?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  planId?: Prisma.SortOrderInput | Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  quantity?: Prisma.SortOrderInput | Prisma.SortOrder
+  frequency?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.CustomerOrderByWithRelationInput
+  plan?: Prisma.PlanOrderByWithRelationInput
   paymentPeriods?: Prisma.PaymentPeriodOrderByRelationAggregateInput
   invoice?: Prisma.InvoiceOrderByWithRelationInput
 }
@@ -319,9 +357,14 @@ export type ServicePeriodWhereUniqueInput = Prisma.AtLeast<{
   billingStatus?: Prisma.EnumBillingStatusFilter<"ServicePeriod"> | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.DateTimeNullableFilter<"ServicePeriod"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planId?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planSnapshot?: Prisma.JsonNullableFilter<"ServicePeriod">
+  quantity?: Prisma.FloatNullableFilter<"ServicePeriod"> | number | null
+  frequency?: Prisma.EnumBillingCycleNullableFilter<"ServicePeriod"> | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanNullableScalarRelationFilter, Prisma.PlanWhereInput> | null
   paymentPeriods?: Prisma.PaymentPeriodListRelationFilter
   invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
 }, "id">
@@ -338,6 +381,10 @@ export type ServicePeriodOrderByWithAggregationInput = {
   billingStatus?: Prisma.SortOrder
   suggestedInvoiceDate?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  planId?: Prisma.SortOrderInput | Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  quantity?: Prisma.SortOrderInput | Prisma.SortOrder
+  frequency?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ServicePeriodCountOrderByAggregateInput
@@ -362,6 +409,10 @@ export type ServicePeriodScalarWhereWithAggregatesInput = {
   billingStatus?: Prisma.EnumBillingStatusWithAggregatesFilter<"ServicePeriod"> | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.DateTimeNullableWithAggregatesFilter<"ServicePeriod"> | Date | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"ServicePeriod"> | string | null
+  planId?: Prisma.StringNullableWithAggregatesFilter<"ServicePeriod"> | string | null
+  planSnapshot?: Prisma.JsonNullableWithAggregatesFilter<"ServicePeriod">
+  quantity?: Prisma.FloatNullableWithAggregatesFilter<"ServicePeriod"> | number | null
+  frequency?: Prisma.EnumBillingCycleNullableWithAggregatesFilter<"ServicePeriod"> | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ServicePeriod"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ServicePeriod"> | Date | string
 }
@@ -377,9 +428,13 @@ export type ServicePeriodCreateInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  plan?: Prisma.PlanCreateNestedOneWithoutServicePeriodsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
   invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
@@ -396,6 +451,10 @@ export type ServicePeriodUncheckedCreateInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
@@ -413,9 +472,13 @@ export type ServicePeriodUpdateInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  plan?: Prisma.PlanUpdateOneWithoutServicePeriodsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
   invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
@@ -432,6 +495,10 @@ export type ServicePeriodUncheckedUpdateInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
@@ -450,6 +517,10 @@ export type ServicePeriodCreateManyInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -465,6 +536,9 @@ export type ServicePeriodUpdateManyMutationInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -481,6 +555,10 @@ export type ServicePeriodUncheckedUpdateManyInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -507,12 +585,17 @@ export type ServicePeriodCountOrderByAggregateInput = {
   billingStatus?: Prisma.SortOrder
   suggestedInvoiceDate?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrder
+  quantity?: Prisma.SortOrder
+  frequency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ServicePeriodAvgOrderByAggregateInput = {
   subtotalAmount?: Prisma.SortOrder
+  quantity?: Prisma.SortOrder
 }
 
 export type ServicePeriodMaxOrderByAggregateInput = {
@@ -527,6 +610,9 @@ export type ServicePeriodMaxOrderByAggregateInput = {
   billingStatus?: Prisma.SortOrder
   suggestedInvoiceDate?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
+  quantity?: Prisma.SortOrder
+  frequency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -543,12 +629,16 @@ export type ServicePeriodMinOrderByAggregateInput = {
   billingStatus?: Prisma.SortOrder
   suggestedInvoiceDate?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
+  quantity?: Prisma.SortOrder
+  frequency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ServicePeriodSumOrderByAggregateInput = {
   subtotalAmount?: Prisma.SortOrder
+  quantity?: Prisma.SortOrder
 }
 
 export type ServicePeriodScalarRelationFilter = {
@@ -610,6 +700,18 @@ export type EnumBillingStatusFieldUpdateOperationsInput = {
   set?: $Enums.BillingStatus
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableEnumBillingCycleFieldUpdateOperationsInput = {
+  set?: $Enums.BillingCycle | null
+}
+
 export type ServicePeriodCreateNestedOneWithoutPaymentPeriodsInput = {
   create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPaymentPeriodsInput, Prisma.ServicePeriodUncheckedCreateWithoutPaymentPeriodsInput>
   connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutPaymentPeriodsInput
@@ -638,6 +740,48 @@ export type ServicePeriodUpdateOneRequiredWithoutInvoiceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServicePeriodUpdateToOneWithWhereWithoutInvoiceInput, Prisma.ServicePeriodUpdateWithoutInvoiceInput>, Prisma.ServicePeriodUncheckedUpdateWithoutInvoiceInput>
 }
 
+export type ServicePeriodCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput> | Prisma.ServicePeriodCreateWithoutPlanInput[] | Prisma.ServicePeriodUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutPlanInput | Prisma.ServicePeriodCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.ServicePeriodCreateManyPlanInputEnvelope
+  connect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+}
+
+export type ServicePeriodUncheckedCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput> | Prisma.ServicePeriodCreateWithoutPlanInput[] | Prisma.ServicePeriodUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutPlanInput | Prisma.ServicePeriodCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.ServicePeriodCreateManyPlanInputEnvelope
+  connect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+}
+
+export type ServicePeriodUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput> | Prisma.ServicePeriodCreateWithoutPlanInput[] | Prisma.ServicePeriodUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutPlanInput | Prisma.ServicePeriodCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.ServicePeriodUpsertWithWhereUniqueWithoutPlanInput | Prisma.ServicePeriodUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.ServicePeriodCreateManyPlanInputEnvelope
+  set?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  disconnect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  delete?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  connect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  update?: Prisma.ServicePeriodUpdateWithWhereUniqueWithoutPlanInput | Prisma.ServicePeriodUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.ServicePeriodUpdateManyWithWhereWithoutPlanInput | Prisma.ServicePeriodUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.ServicePeriodScalarWhereInput | Prisma.ServicePeriodScalarWhereInput[]
+}
+
+export type ServicePeriodUncheckedUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput> | Prisma.ServicePeriodCreateWithoutPlanInput[] | Prisma.ServicePeriodUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.ServicePeriodCreateOrConnectWithoutPlanInput | Prisma.ServicePeriodCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.ServicePeriodUpsertWithWhereUniqueWithoutPlanInput | Prisma.ServicePeriodUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.ServicePeriodCreateManyPlanInputEnvelope
+  set?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  disconnect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  delete?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  connect?: Prisma.ServicePeriodWhereUniqueInput | Prisma.ServicePeriodWhereUniqueInput[]
+  update?: Prisma.ServicePeriodUpdateWithWhereUniqueWithoutPlanInput | Prisma.ServicePeriodUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.ServicePeriodUpdateManyWithWhereWithoutPlanInput | Prisma.ServicePeriodUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.ServicePeriodScalarWhereInput | Prisma.ServicePeriodScalarWhereInput[]
+}
+
 export type ServicePeriodCreateWithoutCustomerInput = {
   id?: string
   startDate: Date | string
@@ -649,8 +793,12 @@ export type ServicePeriodCreateWithoutCustomerInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  plan?: Prisma.PlanCreateNestedOneWithoutServicePeriodsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
   invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
@@ -666,6 +814,10 @@ export type ServicePeriodUncheckedCreateWithoutCustomerInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
@@ -713,6 +865,10 @@ export type ServicePeriodScalarWhereInput = {
   billingStatus?: Prisma.EnumBillingStatusFilter<"ServicePeriod"> | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.DateTimeNullableFilter<"ServicePeriod"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planId?: Prisma.StringNullableFilter<"ServicePeriod"> | string | null
+  planSnapshot?: Prisma.JsonNullableFilter<"ServicePeriod">
+  quantity?: Prisma.FloatNullableFilter<"ServicePeriod"> | number | null
+  frequency?: Prisma.EnumBillingCycleNullableFilter<"ServicePeriod"> | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ServicePeriod"> | Date | string
 }
@@ -728,9 +884,13 @@ export type ServicePeriodCreateWithoutPaymentPeriodsInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  plan?: Prisma.PlanCreateNestedOneWithoutServicePeriodsInput
   invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
 }
 
@@ -746,6 +906,10 @@ export type ServicePeriodUncheckedCreateWithoutPaymentPeriodsInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutServicePeriodInput
@@ -778,9 +942,13 @@ export type ServicePeriodUpdateWithoutPaymentPeriodsInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  plan?: Prisma.PlanUpdateOneWithoutServicePeriodsNestedInput
   invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
 
@@ -796,6 +964,10 @@ export type ServicePeriodUncheckedUpdateWithoutPaymentPeriodsInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutServicePeriodNestedInput
@@ -812,9 +984,13 @@ export type ServicePeriodCreateWithoutInvoiceInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  plan?: Prisma.PlanCreateNestedOneWithoutServicePeriodsInput
   paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
 }
 
@@ -830,6 +1006,10 @@ export type ServicePeriodUncheckedCreateWithoutInvoiceInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
@@ -862,9 +1042,13 @@ export type ServicePeriodUpdateWithoutInvoiceInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  plan?: Prisma.PlanUpdateOneWithoutServicePeriodsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
 }
 
@@ -880,9 +1064,81 @@ export type ServicePeriodUncheckedUpdateWithoutInvoiceInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
+}
+
+export type ServicePeriodCreateWithoutPlanInput = {
+  id?: string
+  startDate: Date | string
+  endDate: Date | string
+  origin: $Enums.PeriodOrigin
+  status?: $Enums.PeriodStatus
+  subtotalAmount: number
+  currency?: string
+  billingStatus?: $Enums.BillingStatus
+  suggestedInvoiceDate?: Date | string | null
+  notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutServicePeriodsInput
+  paymentPeriods?: Prisma.PaymentPeriodCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutServicePeriodInput
+}
+
+export type ServicePeriodUncheckedCreateWithoutPlanInput = {
+  id?: string
+  customerId: string
+  startDate: Date | string
+  endDate: Date | string
+  origin: $Enums.PeriodOrigin
+  status?: $Enums.PeriodStatus
+  subtotalAmount: number
+  currency?: string
+  billingStatus?: $Enums.BillingStatus
+  suggestedInvoiceDate?: Date | string | null
+  notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedCreateNestedManyWithoutServicePeriodInput
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutServicePeriodInput
+}
+
+export type ServicePeriodCreateOrConnectWithoutPlanInput = {
+  where: Prisma.ServicePeriodWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput>
+}
+
+export type ServicePeriodCreateManyPlanInputEnvelope = {
+  data: Prisma.ServicePeriodCreateManyPlanInput | Prisma.ServicePeriodCreateManyPlanInput[]
+  skipDuplicates?: boolean
+}
+
+export type ServicePeriodUpsertWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.ServicePeriodWhereUniqueInput
+  update: Prisma.XOR<Prisma.ServicePeriodUpdateWithoutPlanInput, Prisma.ServicePeriodUncheckedUpdateWithoutPlanInput>
+  create: Prisma.XOR<Prisma.ServicePeriodCreateWithoutPlanInput, Prisma.ServicePeriodUncheckedCreateWithoutPlanInput>
+}
+
+export type ServicePeriodUpdateWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.ServicePeriodWhereUniqueInput
+  data: Prisma.XOR<Prisma.ServicePeriodUpdateWithoutPlanInput, Prisma.ServicePeriodUncheckedUpdateWithoutPlanInput>
+}
+
+export type ServicePeriodUpdateManyWithWhereWithoutPlanInput = {
+  where: Prisma.ServicePeriodScalarWhereInput
+  data: Prisma.XOR<Prisma.ServicePeriodUpdateManyMutationInput, Prisma.ServicePeriodUncheckedUpdateManyWithoutPlanInput>
 }
 
 export type ServicePeriodCreateManyCustomerInput = {
@@ -896,6 +1152,10 @@ export type ServicePeriodCreateManyCustomerInput = {
   billingStatus?: $Enums.BillingStatus
   suggestedInvoiceDate?: Date | string | null
   notes?: string | null
+  planId?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -911,8 +1171,12 @@ export type ServicePeriodUpdateWithoutCustomerInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  plan?: Prisma.PlanUpdateOneWithoutServicePeriodsNestedInput
   paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
   invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
 }
@@ -928,6 +1192,10 @@ export type ServicePeriodUncheckedUpdateWithoutCustomerInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
@@ -945,6 +1213,90 @@ export type ServicePeriodUncheckedUpdateManyWithoutCustomerInput = {
   billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
   suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ServicePeriodCreateManyPlanInput = {
+  id?: string
+  customerId: string
+  startDate: Date | string
+  endDate: Date | string
+  origin: $Enums.PeriodOrigin
+  status?: $Enums.PeriodStatus
+  subtotalAmount: number
+  currency?: string
+  billingStatus?: $Enums.BillingStatus
+  suggestedInvoiceDate?: Date | string | null
+  notes?: string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: number | null
+  frequency?: $Enums.BillingCycle | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ServicePeriodUpdateWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origin?: Prisma.EnumPeriodOriginFieldUpdateOperationsInput | $Enums.PeriodOrigin
+  status?: Prisma.EnumPeriodStatusFieldUpdateOperationsInput | $Enums.PeriodStatus
+  subtotalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+  suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutServicePeriodsNestedInput
+  paymentPeriods?: Prisma.PaymentPeriodUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutServicePeriodNestedInput
+}
+
+export type ServicePeriodUncheckedUpdateWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origin?: Prisma.EnumPeriodOriginFieldUpdateOperationsInput | $Enums.PeriodOrigin
+  status?: Prisma.EnumPeriodStatusFieldUpdateOperationsInput | $Enums.PeriodStatus
+  subtotalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+  suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentPeriods?: Prisma.PaymentPeriodUncheckedUpdateManyWithoutServicePeriodNestedInput
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutServicePeriodNestedInput
+}
+
+export type ServicePeriodUncheckedUpdateManyWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origin?: Prisma.EnumPeriodOriginFieldUpdateOperationsInput | $Enums.PeriodOrigin
+  status?: Prisma.EnumPeriodStatusFieldUpdateOperationsInput | $Enums.PeriodStatus
+  subtotalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  billingStatus?: Prisma.EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+  suggestedInvoiceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  planSnapshot?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  quantity?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  frequency?: Prisma.NullableEnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -992,9 +1344,14 @@ export type ServicePeriodSelect<ExtArgs extends runtime.Types.Extensions.Interna
   billingStatus?: boolean
   suggestedInvoiceDate?: boolean
   notes?: boolean
+  planId?: boolean
+  planSnapshot?: boolean
+  quantity?: boolean
+  frequency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>
   invoice?: boolean | Prisma.ServicePeriod$invoiceArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePeriodCountOutputTypeDefaultArgs<ExtArgs>
@@ -1012,9 +1369,14 @@ export type ServicePeriodSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   billingStatus?: boolean
   suggestedInvoiceDate?: boolean
   notes?: boolean
+  planId?: boolean
+  planSnapshot?: boolean
+  quantity?: boolean
+  frequency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
 }, ExtArgs["result"]["servicePeriod"]>
 
 export type ServicePeriodSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1029,9 +1391,14 @@ export type ServicePeriodSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   billingStatus?: boolean
   suggestedInvoiceDate?: boolean
   notes?: boolean
+  planId?: boolean
+  planSnapshot?: boolean
+  quantity?: boolean
+  frequency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
 }, ExtArgs["result"]["servicePeriod"]>
 
 export type ServicePeriodSelectScalar = {
@@ -1046,28 +1413,36 @@ export type ServicePeriodSelectScalar = {
   billingStatus?: boolean
   suggestedInvoiceDate?: boolean
   notes?: boolean
+  planId?: boolean
+  planSnapshot?: boolean
+  quantity?: boolean
+  frequency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ServicePeriodOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "startDate" | "endDate" | "origin" | "status" | "subtotalAmount" | "currency" | "billingStatus" | "suggestedInvoiceDate" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["servicePeriod"]>
+export type ServicePeriodOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "startDate" | "endDate" | "origin" | "status" | "subtotalAmount" | "currency" | "billingStatus" | "suggestedInvoiceDate" | "notes" | "planId" | "planSnapshot" | "quantity" | "frequency" | "createdAt" | "updatedAt", ExtArgs["result"]["servicePeriod"]>
 export type ServicePeriodInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>
   invoice?: boolean | Prisma.ServicePeriod$invoiceArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePeriodCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServicePeriodIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
 }
 export type ServicePeriodIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.ServicePeriod$planArgs<ExtArgs>
 }
 
 export type $ServicePeriodPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServicePeriod"
   objects: {
     customer: Prisma.$CustomerPayload<ExtArgs>
+    plan: Prisma.$PlanPayload<ExtArgs> | null
     paymentPeriods: Prisma.$PaymentPeriodPayload<ExtArgs>[]
     invoice: Prisma.$InvoicePayload<ExtArgs> | null
   }
@@ -1083,6 +1458,10 @@ export type $ServicePeriodPayload<ExtArgs extends runtime.Types.Extensions.Inter
     billingStatus: $Enums.BillingStatus
     suggestedInvoiceDate: Date | null
     notes: string | null
+    planId: string | null
+    planSnapshot: runtime.JsonValue | null
+    quantity: number | null
+    frequency: $Enums.BillingCycle | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["servicePeriod"]>
@@ -1480,6 +1859,7 @@ readonly fields: ServicePeriodFieldRefs;
 export interface Prisma__ServicePeriodClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customer<T extends Prisma.CustomerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CustomerDefaultArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  plan<T extends Prisma.ServicePeriod$planArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePeriod$planArgs<ExtArgs>>): Prisma.Prisma__PlanClient<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   paymentPeriods<T extends Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePeriod$paymentPeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invoice<T extends Prisma.ServicePeriod$invoiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePeriod$invoiceArgs<ExtArgs>>): Prisma.Prisma__InvoiceClient<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1522,6 +1902,10 @@ export interface ServicePeriodFieldRefs {
   readonly billingStatus: Prisma.FieldRef<"ServicePeriod", 'BillingStatus'>
   readonly suggestedInvoiceDate: Prisma.FieldRef<"ServicePeriod", 'DateTime'>
   readonly notes: Prisma.FieldRef<"ServicePeriod", 'String'>
+  readonly planId: Prisma.FieldRef<"ServicePeriod", 'String'>
+  readonly planSnapshot: Prisma.FieldRef<"ServicePeriod", 'Json'>
+  readonly quantity: Prisma.FieldRef<"ServicePeriod", 'Float'>
+  readonly frequency: Prisma.FieldRef<"ServicePeriod", 'BillingCycle'>
   readonly createdAt: Prisma.FieldRef<"ServicePeriod", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ServicePeriod", 'DateTime'>
 }
@@ -1917,6 +2301,25 @@ export type ServicePeriodDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many ServicePeriods to delete.
    */
   limit?: number
+}
+
+/**
+ * ServicePeriod.plan
+ */
+export type ServicePeriod$planArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Plan
+   */
+  select?: Prisma.PlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Plan
+   */
+  omit?: Prisma.PlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanInclude<ExtArgs> | null
+  where?: Prisma.PlanWhereInput
 }
 
 /**
