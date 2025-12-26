@@ -7,11 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  // Production (Vercel/Prisma Postgres): uses connection pooler for runtime queries
-  url       = env("PRISMA_POSTGRES_PRISMA_DATABASE_URL")
-  // Production: uses direct connection for migrations
-  directUrl = env("PRISMA_POSTGRES_POSTGRES_URL")
+  provider = "postgresql"
+  // Connection URLs are configured in prisma.config.ts (Prisma 7+)
 }
 
 enum BillingCycle {
