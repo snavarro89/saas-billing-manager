@@ -6,7 +6,12 @@ import { useRouter } from "next/navigation"
 import { addMonths } from "date-fns"
 import { PlanSelector } from "@/components/plans/PlanSelector"
 import { calculateEndDateFromFrequency } from "@/lib/period-utils"
-import type { Plan, BillingCycle } from "@/types"
+import type { Plan, PlanPricing, PlanUsageLimit, BillingCycle } from "@/types"
+
+type PlanWithRelations = Plan & {
+  pricing: PlanPricing[]
+  usageLimits: PlanUsageLimit[]
+}
 
 interface ServicePeriodFormProps {
   customerId: string
@@ -18,9 +23,9 @@ export function ServicePeriodForm({ customerId, defaultSubtotal = 0, defaultCurr
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [plans, setPlans] = useState<Plan[]>([])
+  const [plans, setPlans] = useState<PlanWithRelations[]>([])
   const [selectedPlanId, setSelectedPlanId] = useState<string>("")
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<PlanWithRelations | null>(null)
   const [selectedFrequency, setSelectedFrequency] = useState<BillingCycle | "">("")
   const [quantity, setQuantity] = useState<string>("1")
   const today = new Date().toISOString().split("T")[0]

@@ -22,12 +22,17 @@ interface Pricing {
   currency: string
 }
 
+type PlanWithRelations = Plan & {
+  pricing: PlanPricing[]
+  usageLimits: PlanUsageLimit[]
+}
+
 export default function PlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [planId, setPlanId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [plan, setPlan] = useState<Plan | null>(null)
+  const [plan, setPlan] = useState<PlanWithRelations | null>(null)
   const [formData, setFormData] = useState({
     code: "",
     name: "",
