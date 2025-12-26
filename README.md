@@ -38,7 +38,7 @@ Internal web application for managing customer payments, service periods, operat
 2. **Set up environment variables**:
    Create a `.env` file in the root directory:
    ```env
-   # Database Connection (Prisma reads this from environment)
+   # Local Development - PostgreSQL Connection
    # Replace USERNAME, PASSWORD, HOST, PORT, and DATABASE_NAME with your PostgreSQL credentials
    DATABASE_URL="postgresql://user:password@localhost:5432/saas_manager?schema=public"
    
@@ -50,9 +50,11 @@ Internal web application for managing customer payments, service periods, operat
    ```
    
    **Important**: 
-   - The `DATABASE_URL` is used by both Prisma (for migrations) and the application (for database connections)
-   - Prisma reads this from `process.env.DATABASE_URL` as configured in `prisma.config.ts`
-   - Replace the placeholder values with your actual PostgreSQL credentials
+   - **Local Development**: Use `DATABASE_URL` pointing to your local PostgreSQL instance
+   - **Production (Vercel/Supabase)**: Vercel automatically provides these environment variables:
+     - `POSTGRES_PRISMA_URL` - Connection pooling URL for Prisma (preferred)
+     - `POSTGRES_URL` - Direct connection URL (fallback)
+     - The application will automatically use the correct URL based on the environment
    - Generate a secure secret key:
      ```bash
      openssl rand -base64 32
